@@ -1,0 +1,820 @@
+#+STARTUP: fold
+* use-package
+  Check if use-package is installed and always ensure t.
+  #+BEGIN_SRC emacs-lisp
+    (require 'use-package-ensure)
+    (setq use-package-always-ensure t)
+  #+END_SRC
+* Defaults
+  I snitched some defaults from 'sensible-defaults.el' from this [[https://www.github.com/hrs/sensible-defaults.el][Link]].
+** Open Files From Home Directory
+   When opening a file, start searching at the user's home
+   directory.
+   #+BEGIN_SRC emacs-lisp
+     (setq default-directory "~/")
+   #+END_SRC
+** Increase GC Threshold
+   Allow 20MB of memory (instead of 0.76MB) before calling
+   garbage collection. This means GC runs less often, which speeds
+   up some operations.
+   #+BEGIN_SRC emacs-lisp
+     (setq gc-cons-threshold 2000000000)
+   #+END_SRC
+** Single Space After Periods
+   WTF?
+   #+BEGIN_SRC emacs-lisp
+     (setq sentence-end-double-space nil)
+   #+END_SRC
+** Ensure That Files End With Newline
+   If you save a file that doesn't end with a newline,
+   automatically append one.
+   #+BEGIN_SRC emacs-lisp
+     (setq require-final-newline t)
+   #+END_SRC
+** Make Dired File Sizes Human Readable
+   Add file sizes in human-readable units (KB, MB, etc) to dired
+   buffers.
+   #+BEGIN_SRC emacs-lisp
+     (setq-default dired-listing-switches "-alh")
+   #+END_SRC
+** Shorten Yes Or No
+   Don't ask `yes/no?', ask `y/n?'.
+   #+BEGIN_SRC emacs-lisp
+     (fset 'yes-or-no-p 'y-or-n-p)
+   #+END_SRC
+** Always Highlight Code
+   Turn on syntax highlighting whenever possible.
+   #+BEGIN_SRC emacs-lisp
+     (global-font-lock-mode t)
+   #+END_SRC
+** Set Default Line Length To 80
+   Set the default line length to 80.
+   #+BEGIN_SRC emacs-lisp
+     (setq-default fill-column 100)
+   #+END_SRC
+* Packages
+** Auto Compile
+   This package provides two minor modes which automatically recompile Emacs
+   Lisp source files. Together these modes guarantee that Emacs never loads
+   outdated byte code files.
+   #+BEGIN_SRC emacs-lisp
+     (use-package auto-compile
+       :config
+       (auto-compile-on-load-mode)
+       (setq load-prefer-newer t))
+   #+END_SRC
+** Evil
+   Evil is an extensible vi layer for Emacs. It provides Vim features like
+   Visual selection and text objects, and is the successor to the now-obsolete
+   Vimpulse and vim-mode.
+   #+BEGIN_SRC emacs-lisp
+     (use-package evil
+       :init
+       (setq evil-want-abbrev-expand-on-insert-exit nil
+             evil-want-keybinding nil)
+       :config
+       (evil-mode 1))
+   #+END_SRC
+** Evil Collection
+   This is a collection of Evil bindings for the parts of Emacs that
+   Evil does not cover properly by default, such as help-mode, M-x
+   calendar, Eshell and more.
+   #+BEGIN_SRC emacs-lisp
+     (use-package evil-collection
+       :after evil
+       :config
+       (evil-collection-init))
+   #+END_SRC
+** Evil Org
+   #+BEGIN_SRC emacs-lisp
+     (use-package evil-org
+       :after org
+       :config
+       (add-hook 'org-mode-hook 'evil-org-mode)
+       (add-hook 'evil-org-mode-hook
+                 (lambda () (evil-org-set-key-theme)))
+       (require 'evil-org-agenda)
+       (evil-org-agenda-set-keys))
+   #+END_SRC
+** Evil Leader
+   Evil Leader provides the <leader> feature from Vim that provides an easy way
+   to bind keys under a variable prefix key. For an experienced Emacs User it is
+   nothing more than a convoluted key map, but for a Evil user coming from Vim
+   it means an easier start.
+   #+BEGIN_SRC emacs-lisp
+     (use-package evil-leader
+       :config
+       (global-evil-leader-mode)
+       (evil-leader/set-leader "<SPC>")
+       (evil-leader/set-key "<RET>" 'bookmark-jump)
+       ;; p - Project
+       (evil-leader/set-key "pp" 'projectile-switch-project)
+       (evil-leader/set-key "pf" 'projectile-find-file)
+       (evil-leader/set-key "pa" 'projectile-add-known-project)
+       (evil-leader/set-key "pd" 'projectile-remove-known-project)
+       ;; b - Buffer
+       (evil-leader/set-key "bs" 'save-buffer)
+       (evil-leader/set-key "bp" 'previous-buffer)
+       (evil-leader/set-key "bi" 'ibuffer)
+       ;; f - Find
+       (evil-leader/set-key "fp" 'siatwe/find-config-file)
+       ;; o - Open
+       (evil-leader/set-key "oe" 'eshell-here)
+       (evil-leader/set-key "od" 'dired)
+       (evil-leader/set-key "op" 'treemacs)
+       (evil-leader/set-key "ot" 'vterm)
+       ;; n - Notes
+       (evil-leader/set-key "nf" 'siatwe/find-org-file)
+       (evil-leader/set-key "na" 'org-agenda)
+       ;; h - Help
+       (evil-leader/set-key "hv" 'describe-variable)
+       (evil-leader/set-key "hf" 'describe-function)
+       (evil-leader/set-key "hk" 'describe-key)
+       (evil-leader/set-key "hm" 'describe-mode)
+       )
+
+     (defun siatwe/find-file-in-given-directory (directory)
+       (interactive)
+       (if directory-p
+	   (counsel-find-file directory)
+	 (message (format "Directory %s not found" directory))))
+
+     (defun siatwe/find-config-file ()
+       (interactive)
+       (counsel-find-file "~/.emacs.d/"))
+
+     (defun siatwe/find-org-file ()
+       (interactive)
+       (counsel-find-file "~/org/"))
+
+     (defun siatwe/find-string-in-org-files ()
+       (interactive)
+       (counsel-projectile-rg "~/org/"))
+   #+END_SRC
+** Evil Surround
+   This package emulates surround.vim by Tim Pope. The functionality is wrapped
+   into a minor mode. This package uses Evil as its vi layer.
+   #+BEGIN_SRC emacs-lisp
+     ;; (use-package evil-surround
+     ;;   :config
+     ;;   (global-evil-surround-mode))
+   #+END_SRC
+** Evil Matchit
+   #+BEGIN_SRC emacs-lisp
+     (use-package evil-matchit
+       :config
+       (global-evil-matchit-mode 1))
+   #+END_SRC
+** Evil Multiedit
+   This plugin was an answer to the lack of proper multiple cursor support in
+   Emacs+evil. It allows you to select and edit matches interactively,
+   integrating iedit-mode into evil-mode with an attempt at sensible defaults.
+   #+BEGIN_SRC emacs-lisp
+     (use-package evil-multiedit
+       :config
+       (define-key evil-visual-state-map "R" 'evil-multiedit-match-all)
+       (define-key evil-normal-state-map (kbd "M-d") 'evil-multiedit-match-and-next)
+       (define-key evil-visual-state-map (kbd "M-d") 'evil-multiedit-match-and-next)
+       (define-key evil-insert-state-map (kbd "M-d") 'evil-multiedit-toggle-marker-here)
+       (define-key evil-normal-state-map (kbd "M-D") 'evil-multiedit-match-and-prev)
+       (define-key evil-visual-state-map (kbd "M-D") 'evil-multiedit-match-and-prev)
+       (define-key evil-visual-state-map (kbd "C-M-D") 'evil-multiedit-restore)
+       (define-key evil-multiedit-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
+       (define-key evil-motion-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
+       (define-key evil-multiedit-state-map (kbd "C-n") 'evil-multiedit-next)
+       (define-key evil-multiedit-state-map (kbd "C-p") 'evil-multiedit-prev)
+       (define-key evil-multiedit-insert-state-map (kbd "C-n") 'evil-multiedit-next)
+       (define-key evil-multiedit-insert-state-map (kbd "C-p") 'evil-multiedit-prev)
+       (evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match))
+   #+END_SRC
+** Evil Commentary
+   evil-commentary is an Emacs package for evil-mode that intends to make it
+   easy to comment out (lines of) code.
+   #+BEGIN_SRC emacs-lisp
+     (use-package evil-commentary
+       :config
+       (evil-commentary-mode))
+   #+END_SRC
+** Evil Magit
+   Black magic or evil keys for magit.
+   #+BEGIN_SRC emacs-lisp
+     ;;(use-package evil-magit)
+   #+END_SRC
+** Evil Org
+   #+BEGIN_SRC emacs-lisp
+     (use-package evil-org
+       :after org
+       :hook (org-mode . (lambda () evil-org-mode))
+       :config
+       (require 'evil-org-agenda)
+       (evil-org-agenda-set-keys))
+   #+END_SRC
+** Undo Tree
+   #+BEGIN_SRC emacs-lisp
+     (use-package undo-tree)
+     (global-undo-tree-mode 1)
+   #+END_SRC
+** Key Chord
+   In this package, a "key chord" is two keys pressed simultaneously, or a
+   single key quickly pressed twice.
+   #+BEGIN_SRC emacs-lisp
+     (use-package key-chord
+       :config
+       (setq key-chord-two-keys-delay 0.5)
+       (key-chord-define evil-insert-state-map "jj" 'evil-normal-state)
+       (key-chord-define evil-insert-state-map "kk" 'yas-expand)
+       (key-chord-mode 1))
+   #+END_SRC
+** Diff Hl
+   =diff-hl-mode= highlights uncommitted changes on the left side of the window,
+   allows you to jump between and revert them selectively.
+   #+BEGIN_SRC emacs-lisp
+     (use-package diff-hl
+       :config
+       (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
+       (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+       (global-diff-hl-mode))
+   #+END_SRC
+** Tramp
+   TRAMP (Transparent Remote Access, Multiple Protocols) is a package for
+   editing remote files. (Needed for helm-projectile commands)
+   #+BEGIN_SRC emacs-lisp
+     (use-package tramp)
+   #+END_SRC
+** Magit
+   Magit is an interface to the version control system Git, implemented as an
+   Emacs package. Magit aspires to be a complete Git porcelain. While we cannot
+   (yet) claim that Magit wraps and improves upon each and every Git command, it
+   is complete enough to allow even experienced Git users to perform almost all
+   of their daily version control tasks directly from within Emacs. While many
+   fine Git clients exist, only Magit and Git itself deserve to be called
+   porcelains.
+   #+BEGIN_SRC emacs-lisp
+     (use-package magit)
+   #+END_SRC
+** Emmet Mode
+   =zencoding-mode= is a minor mode providing support for Zen Coding by
+   producing HTML from CSS-like selectors.
+   #+BEGIN_SRC emacs-lisp
+     (use-package emmet-mode
+       :config
+       (emmet-mode 1)
+       (define-key emmet-mode-keymap [tab] 'emmet-expand-line)
+       (add-hook 'php-mode-hook 'emmet-mode)
+       (add-hook 'web-mode-hook 'emmet-mode)
+       (add-hook 'html-mode-hook 'emmet-mode)
+       (add-hook 'css-mode-hook  'emmet-mode))
+   #+END_SRC
+** Ivy and Counsel
+   #+BEGIN_SRC emacs-lisp
+     (use-package ivy
+       :diminish
+       :bind (("C-s" . swiper)
+              :map ivy-minibuffer-map
+              ("C-j" . ivy-next-line)
+              ("C-k" . ivy-previous-line)
+              :map ivy-switch-buffer-map
+              ("C-j" . ivy-next-line)
+              ("C-k" . ivy-previous-line)
+              :map ivy-reverse-i-search-map
+              ("C-j" . ivy-next-line)
+              ("C-k" . ivy-previous-line))
+       :config
+       (ivy-mode 1))
+
+     (use-package ivy-rich
+       :init
+       (ivy-rich-mode 1))
+
+     (use-package counsel
+       :custom
+       (counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)
+       :config
+       (setq counsel-find-file-ignore-regexp "\\.log\\'")
+       (counsel-mode 1))
+
+     (use-package flx
+       :config
+       (setq ivy-re-builders-alist
+             '((t . ivy--regex-plus)))
+       (setq ivy-re-builders-alist
+             '((ivy-switch-buffer . ivy--regex-plus)
+               (t . ivy--regex-fuzzy))))
+
+     (use-package ivy-prescient
+       :after counsel
+       :custom
+       (ivy-prescient-enable-filtering nil)
+       :config
+       ;; Uncomment the following line to have sorting remembered across sessions!
+       (prescient-persist-mode 1)
+       (ivy-prescient-mode 1))
+   #+END_SRC
+** Helpful
+   #+BEGIN_SRC emacs-lisp
+     (use-package helpful
+       :custom
+       (counsel-describe-function-function #'helpful-callable)
+       (counsel-describe-variable-function #'helpful-variable)
+       :bind
+       ([remap describe-function] . counsel-describe-function)
+       ([remap describe-command] . helpful-command)
+       ([remap describe-variable] . counsel-describe-variable)
+       ([remap describe-key] . helpful-key))
+   #+END_SRC
+** Company
+   Company is a text completion framework for Emacs. The name stands for
+   "complete anything". It uses pluggable back-ends and front-ends to retrieve
+   and display completion candidates.
+   #+BEGIN_SRC emacs-lisp
+     (use-package company
+       :bind (:map company-active-map
+                   ("RET" . company-complete-selection)
+                   ("C-n" . company-select-next)
+                   ("C-p" . company-select-previous))
+       :config
+       (setq company-minimum-prefix-length 1
+             company-idle-delay 0.0))
+     (add-hook 'after-init-hook 'global-company-mode)
+   #+end_SRC
+** LSP
+   Emacs client/library for the Language Server Protocol.
+   #+BEGIN_SRC emacs-lisp
+          (use-package lsp-mode
+            :hook (prog-mode . lsp)
+            :commands lsp
+            :config
+            (setq +lsp-company-backend 'company-capf)
+            (setq lsp-prefer-capf t)
+            (setq lsp-idle-delay 0.500)
+            (setq lsp-enable-file-watchers 1)
+            (setq lsp-file-watch-threshold '99999)
+            (setq lsp-ui-doc-enable nil)
+            (setq lsp-headerline-breadcrumb-enable nil)
+     )
+
+          (use-package lsp-ui
+            :after lsp-mode
+            :init
+            (setq lsp-ui-doc-enable nil)
+            :commands
+            lsp-ui-mode)
+   #+END_SRC
+** Treemacs
+   #+BEGIN_SRC emacs-lisp
+     (use-package treemacs
+       :config
+       (treemacs-git-mode 'simple)
+       (treemacs-filewatch-mode t))
+     (use-package treemacs-evil
+       :after treemacs)
+     (use-package treemacs-projectile
+       :after treemacs)
+   #+END_SRC
+** LSP Treemacs
+   #+BEGIN_SRC emacs-lisp
+     (use-package lsp-treemacs
+       :config
+       (lsp-treemacs-sync-mode 1))
+   #+END_SRC
+** Yasnippet
+   YASnippet is a template system for Emacs. It allows you to type an
+   abbreviation and automatically expand it into function templates. Bundled
+   language templates include: C, C++, C#, Perl, Python, Ruby, SQL, LaTeX, HTML,
+   CSS and more.
+   #+BEGIN_SRC emacs-lisp
+     (use-package yasnippet
+       :config
+       (yas-global-mode 1)
+       (define-key yas-minor-mode-map (kbd "<tab>") nil)
+       (define-key yas-minor-mode-map (kbd "TAB") nil))
+   #+END_SRC
+** All The Icons
+   A utility package to collect various Icon Fonts and propertize them within
+   Emacs.
+   #+BEGIN_SRC emacs-lisp
+     (use-package all-the-icons)
+   #+END_SRC
+** Projectile
+   Projectile is a project interaction library for Emacs. Its goal is to provide
+   a nice set of features operating on a project level without introducing
+   external dependencies (when feasible). For instance - finding project files
+   has a portable implementation written in pure Emacs Lisp without the use of
+   GNU find (but for performance sake an indexing mechanism backed by external
+   commands exists as well).
+   #+BEGIN_SRC emacs-lisp
+     (use-package projectile
+       :diminish projectile-mode
+       :config
+       (projectile-mode)
+       (setq projectile-project-search-path '("/data/55/" "/data/53/" "/data/Projects/"))
+       :custom ((projectile-completion-system 'ivy))
+       :init
+       (setq projectile-switch-project-action #'projectile-dired))
+
+     (use-package counsel-projectile
+       :config (counsel-projectile-mode))
+   #+END_SRC
+** Doom Modline
+   A fancy and fast mode-line inspired by minimalism design.
+   #+BEGIN_SRC emacs-lisp
+     (use-package doom-modeline
+       :init
+       (doom-modeline-mode 1))
+   #+END_SRC
+** Theme
+   Dracula can't stand the light.
+   #+BEGIN_SRC emacs-lisp
+     (use-package dracula-theme
+       :config
+       (load-theme 'dracula t)
+       (setq doom-themes-enable-bold t
+             doom-themes-enable-italic t))
+
+     (defvar siatwe/frame-transparency '(90 . 90))
+
+     (set-frame-parameter (selected-frame) 'alpha siatwe/frame-transparency)
+     (add-to-list 'default-frame-alist `(alpha . ,siatwe/frame-transparency))
+   #+END_SRC
+** PHP Mode
+   A PHP mode for GNU Emacs.
+   #+BEGIN_SRC emacs-lisp
+     (use-package php-mode)
+   #+END_SRC
+** PHP CS Fixer
+   =php-cs-fixer= wrapper for the Emacs editor.
+   #+BEGIN_SRC emacs-lisp
+     (use-package php-cs-fixer)
+   #+END_SRC
+** Typescript
+   #+BEGIN_SRC emacs-lisp
+     (use-package typescript-mode
+       :mode "\\.ts\\'"
+       :config
+       (setq typescript-indent-level 2))
+   #+END_SRC
+** Hl Todo
+   Highlight TODO and similar keywords in comments and strings
+   #+BEGIN_SRC emacs-lisp
+     (use-package hl-todo
+       :config
+       (add-hook 'prog-mode-hook 'hl-todo-mode))
+   #+END_SRC
+** Org-bullets
+   Utf-8 bullets for org-mode.
+   #+BEGIN_SRC emacs-lisp
+     (use-package org-bullets
+       :after org
+       :hook (org-mode . org-bullets-mode)
+       :custom
+       (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+   #+END_SRC
+** Which Key
+   Emacs package that displays available keybindings in popup.
+   #+BEGIN_SRC emacs-lisp
+     (use-package which-key
+       :config
+       (which-key-mode))
+   #+END_SRC
+** Beacon
+   A light that follows your cursor around so you don't lose it!
+   #+BEGIN_SRC emacs-lisp
+     (use-package beacon
+       :config
+       (beacon-mode 1))
+   #+END_SRC
+** Yaml Mode
+   yaml-mode.el helps you edit YAML .yml files.
+   #+BEGIN_SRC emacs-lisp
+     ;; (use-package yaml-mode
+     ;;   :config
+     ;;   (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
+   #+END_SRC
+** Web Mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package web-mode
+       :config
+       (setq web-mode-markup-indent-offset 2
+             web-mode-css-indent-offset 2 web-mode-code-indent-offset
+             2 web-mode-indent-style 2)
+       (add-to-list 'auto-mode-alist '("\\.twig\\'" . web-mode)))
+   #+END_SRC
+** Eshell
+   #+BEGIN_SRC emacs-lisp
+     (use-package eshell
+       :init
+       (setq eshell-scroll-to-bottom-on-input 'all
+             eshell-error-if-no-glob t
+             eshell-hist-ignoredups t
+             eshell-save-history-on-exit t
+             eshell-prefer-lisp-functions nil
+             eshell-destroy-buffer-when-process-dies t)
+       :config
+       (setq eshell-prompt-function
+             (lambda ()
+               (concat (eshell/pwd) " λ ")))
+       (add-hook 'eshell-exit-hook 'eshell-pop--kill-and-delete-window))
+
+     (defun eshell/close ()
+       (delete-window))
+
+     (defun eshell/clear ()
+       (let ((inhibit-read-only t))
+         (erase-buffer)))
+
+     (defun eshell-pop--kill-and-delete-window ()
+       (unless (one-window-p)
+         (delete-window)))
+
+     (use-package eshell-up
+       :commands eshell-up eshell-up-peek)
+
+     (use-package eshell-did-you-mean
+       :after esh-mode ; Specifically esh-mode, not eshell
+       :config
+       (eshell-did-you-mean-setup)
+       ;; HACK There is a known issue with `eshell-did-you-mean' where it does not
+       ;;      work on first invocation, so we invoke it once manually by setting the
+       ;;      last command and then calling the output filter.
+       (setq eshell-last-command-name "catt")
+       (eshell-did-you-mean-output-filter "catt: command not found"))
+   #+END_SRC
+** Expand Region
+   Expand region increases the selected region by semantic units. Just keep
+   pressing the key until it selects what you want.
+   #+BEGIN_SRC emacs-lisp
+     (use-package expand-region)
+   #+END_SRC
+** Windower
+   Helper functions for window manipulation.
+   #+BEGIN_SRC emacs-lisp
+     (use-package windower)
+   #+END_SRC
+** Scratch
+   Scratch is an extension to Emacs that enables one to create scratch buffers
+   that are in the same mode as the current buffer. This is notably useful when
+   working on code in some language; you may grab code into a scratch buffer,
+   and, by virtue of this extension, do so using the Emacs formatting rules for
+   that language.
+   #+BEGIN_SRC emacs-lisp
+     (use-package scratch)
+   #+END_SRC
+** Browse Kill Ring
+   Are you tired of using the endless keystrokes of C-y M-y M-y M-y ... to get
+   at that bit of text you killed thirty-seven kills ago? Ever wish you could
+   just look through everything you've killed recently to find out if you killed
+   that piece of text that you think you killed, but you're not quite sure? If
+   so, then browse-kill-ring is the Emacs extension for you.
+   #+BEGIN_SRC emacs-lisp
+     (use-package browse-kill-ring)
+   #+END_SRC
+** Rainbow Delimiters
+   rainbow-delimiters is a "rainbow parentheses"-like mode which highlights
+   delimiters such as parentheses, brackets or braces according to their depth.
+   Each successive level is highlighted in a different color. This makes it easy
+   to spot matching delimiters, orient yourself in the code, and tell which
+   statements are at a given depth.
+   #+BEGIN_SRC emacs-lisp
+     (use-package rainbow-delimiters)
+     (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+   #+END_SRC
+** Disk Usage
+   #+BEGIN_SRC emacs-lisp
+     (use-package disk-usage)
+   #+END_SRC
+** Tablist
+   Needed for PDF Tools.
+   #+BEGIN_SRC emacs-lisp
+     (use-package tablist)
+   #+END_SRC
+** PDF Tools
+   PDF Tools is, among other things, a replacement of DocView for PDF files. The
+   key difference is that pages are not pre-rendered by e.g. ghostscript and
+   stored in the file-system, but rather created on-demand and stored in memory.
+   This rendering is performed by a special library named, for whatever reason,
+   poppler, running inside a server program. This program is called epdfinfo and
+   its job is to successively read requests from Emacs and produce the proper
+   results, i.e. the PNG image of a PDF page. Actually, displaying PDF files is
+   just one part of PDF Tools. Since poppler can provide us with all kinds of
+   information about a document and is also able to modify it, there is a lot
+   more we can do with it.
+   #+BEGIN_SRC emacs-lisp
+     (use-package pdf-tools)
+     (pdf-tools-install)
+   #+END_SRC
+** Bongo
+   Bongo is a flexible and usable media player for GNU Emacs. If you store your
+   music collection locally and use structured file names, then Bongo is a great
+   way for you to play music from within Emacs.
+   #+BEGIN_SRC emacs-lisp
+     (use-package bongo
+       :config
+       (setq bongo-prefer-library-buffers nil)
+       (setq bongo-default-directory "~/Cloud/Music")
+       (setq bongo-insert-whole-directory-trees t)
+       (setq bongo-display-header-icons nil)
+       (setq bongo-mark-played-tracks t)
+       (setq bongo-header-line-mode nil)
+       (setq bongo-display-track-icons nil))
+   #+END_SRC
+* Functions
+** Minify JS and LESS
+   #+BEGIN_SRC emacs-lisp
+     (defun minify-js-or-less ()
+       (interactive)
+       (save-window-excursion
+         ;; LESS
+         (when (string= (file-name-extension buffer-file-name) "less")
+           (async-shell-command
+            (concat "lessc --no-color " (projectile-project-root) "webroot/less/main.less "  (projectile-project-root) "webroot/less/main.css")))
+         ;; JS
+         (when (string= (file-name-extension buffer-file-name) "js")
+           (async-shell-command
+            (concat "yui-compressor " (projectile-project-root) "webroot/js/main.js -o "  (projectile-project-root) "webroot/js/main.min.js")))))
+   #+END_SRC
+** Indent/Format Whole Buffer
+   #+BEGIN_SRC emacs-lisp
+     (defun format-and-indent-buffer ()
+       "Indent whole buffer and delete trailing whitespace."
+       (interactive)
+       (save-excursion
+         (indent-region (point-min) (point-max) nil)
+         (delete-trailing-whitespace)
+         ;; PHP
+         (when (string= (file-name-extension buffer-file-name) "php")
+           (lsp-format-buffer))
+         ;; org
+         (when (string= (file-name-extension buffer-file-name) "org")
+           (org-fill-paragraph))))
+   #+END_SRC
+** Copy Current File Path With Line Number To Kill Ring
+   #+BEGIN_SRC emacs-lisp
+     (defun position-to-kill-ring ()
+       "Copy to the kill ring a string in the format \"file-name::line-number\"
+        for the current buffer's file name, and the line number at point."
+       (interactive)
+       (kill-new
+        (format "%s::%d" (buffer-file-name) (save-restriction
+                                              (widen) (line-number-at-pos)))))
+   #+END_SRC
+** Small eshell On Bottom Of Window
+   Thanks to [[https://github.com/abrochard/emacs-config/blob/master/configuration.org][abrochard]].
+   #+BEGIN_SRC emacs-lisp
+     (defun eshell-here ()
+       (interactive)
+       (let* ((height (/ (window-total-height) 3)))
+         (split-window-vertically (- height))
+         (other-window 1)
+         (eshell "new")))
+
+     (defun projectile-eshell-here ()
+       (interactive)
+       (let* ((height (/ (window-total-height) 3)))
+         (split-window-vertically (- height))
+         (other-window 1)
+         (projectile-run-eshell "new")))
+   #+END_SRC
+* Misc
+** Customization
+*** Space over tabs
+    #+BEGIN_SRC emacs-lisp
+      (setq-default indent-tabs-mode nil)
+    #+END_SRC
+*** Avoid tabs.
+    #+BEGIN_SRC emacs-lisp
+      (setq-default indent-tabs-mode nil)
+    #+END_SRC
+*** Disable mini-buffer start-up message
+    #+BEGIN_SRC emacs-lisp
+      (defun display-startup-echo-area-message ()(message ""))
+    #+END_SRC
+*** Eww as default browser
+    #+BEGIN_SRC emacs-lisp
+      (setq browse-url-browser-function 'eww-browse-url)
+    #+END_SRC
+*** Disable GUI elements.
+    #+BEGIN_SRC emacs-lisp
+      (menu-bar-mode -1)
+      (toggle-scroll-bar -1)
+      (tool-bar-mode -1)
+    #+END_SRC
+*** Hide mouse while typing.
+    #+BEGIN_SRC emacs-lisp
+      (mouse-avoidance-mode)
+    #+END_SRC
+*** Show matching parens.
+    #+BEGIN_SRC emacs-lisp
+      (show-paren-mode 1)
+    #+END_SRC
+*** When on, typing any left bracket automatically insert the right matching bracket
+    #+BEGIN_SRC emacs-lisp
+      (electric-pair-mode 1)
+    #+END_SRC
+*** Enable line numbers and prog-mode in all programming modes and org mode.
+    #+BEGIN_SRC emacs-lisp
+      (global-display-line-numbers-mode t)
+
+      (dolist (mode '(org-mode-hook
+                      term-mode-hook
+                      shell-mode-hook
+                      vterm-mode-hook
+                      treemacs-mode-hook
+                      eshell-mode-hook))
+        (add-hook mode (lambda () (display-line-numbers-mode 0))))
+    #+END_SRC
+*** Highlight current line.
+    #+BEGIN_SRC emacs-lisp
+      (global-hl-line-mode +1)
+    #+END_SRC
+*** Wrap lines at the 80th column.
+    #+BEGIN_SRC emacs-lisp
+      (add-hook 'text-mode-hook 'auto-fill-mode)
+      (add-hook 'org-mode-hook 'auto-fill-mode)
+      (setq-default fill-column 80)
+    #+END_SRC
+*** Show column number
+    #+BEGIN_SRC emacs-lisp
+      (column-number-mode 1)
+    #+END_SRC
+*** Set font.
+    #+BEGIN_SRC emacs-lisp
+      (defvar siatwe/default-font-size 140)
+      (defvar siatwe/default-variable-font-size 140)
+      (set-face-attribute 'default nil :font "Hack" :height siatwe/default-font-size)
+    #+END_SRC
+*** Disable mini buffer position.
+    #+BEGIN_SRC emacs-lisp
+      (set-window-scroll-bars (minibuffer-window) nil nil)
+    #+END_SRC
+*** Set visual bell.
+    #+BEGIN_SRC emacs-lisp
+      (setq visible-bell t)
+    #+END_SRC
+*** Disable backup und auto save files.
+    #+BEGIN_SRC emacs-lisp
+      (setq make-backup-files nil)
+      (setq auto-save-default nil)
+    #+END_SRC
+*** Disable startup-screen.
+    #+BEGIN_SRC emacs-lisp
+      (setq inhibit-startup-screen t)
+      (let ((inhibit-message nil)))
+    #+END_SRC
+*** Always start emacs in fullscreen mode
+    #+BEGIN_SRC emacs-lisp
+      (toggle-frame-maximized)
+    #+END_SRC
+*** Optimization for LSP.
+    #+BEGIN_SRC emacs-lisp
+      (setq read-process-output-max (* 3072 3072)) ;; 3mb
+    #+END_SRC
+*** Garbage-collect on focus out
+    #+BEGIN_SRC emacs-lisp
+      (add-hook 'focus-out-hook #'garbage-collect)
+    #+END_SRC
+*** UTF-8 everywhere
+    #+BEGIN_SRC emacs-lisp
+      (prefer-coding-system       'utf-8)
+      (set-default-coding-systems 'utf-8)
+      (set-terminal-coding-system 'utf-8)
+      (set-keyboard-coding-system 'utf-8)
+      (setq default-buffer-file-coding-system 'utf-8)
+    #+END_SRC
+*** Auto save visited
+    #+BEGIN_SRC emacs-lisp
+      ;; (setq auto-save-visited-interval 1)
+      ;; (auto-save-visited-mode 1)
+    #+END_SRC
+* Org
+*** Fix for opening Org links in external apps
+    #+BEGIN_SRC emacs-lisp
+      (setq process-connection-type nil)
+    #+END_SRC
+*** Don't ask for evaluation
+    #+BEGIN_SRC emacs-lisp
+      (setq org-confirm-babel-evaluate nil)
+    #+END_SRC
+*** Disable Org Indent Mode.
+    #+BEGIN_SRC emacs-lisp
+      ;;(org-indent-mode -1)
+    #+END_SRC
+*** Ellipsis
+    #+BEGIN_SRC emacs-lisp
+        (setq org-ellipsis " ▾")
+    #+END_SRC
+* Pathfinder
+  #+BEGIN_SRC emacs-lisp
+    (load "~/.emacs.d/lisp/pathfinder")
+  #+END_SRC
+
+* To Sort
+  #+BEGIN_SRC emacs-lisp
+    (setq warning-minimum-level :emergency)
+    (global-set-key (kbd "C-SPC") 'completion-at-point)
+    (setq org-agenda-files '(
+                             "~/org/appointments.org"
+                             "~/org/people.org"
+                             "~/org/todo.org"
+                             ))
+    (setq org-directory "~/org")
+  #+END_SRC
