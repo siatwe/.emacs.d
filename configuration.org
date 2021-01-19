@@ -126,6 +126,8 @@
        ;; n - Notes
        (evil-leader/set-key "nf" 'siatwe/find-org-file)
        (evil-leader/set-key "na" 'org-agenda)
+       ;; g - maGit
+       (evil-leader/set-key "gg" 'magit)
        ;; h - Help
        (evil-leader/set-key "hv" 'describe-variable)
        (evil-leader/set-key "hf" 'describe-function)
