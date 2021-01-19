@@ -6,7 +6,12 @@
     (setq use-package-always-ensure t)
   #+END_SRC
 * Defaults
-  I snitched some defaults from 'sensible-defaults.el' from this [[https://www.github.com/hrs/sensible-defaults.el][Link]].
+** Variables
+   #+begin_SRC emacs-lisp
+     (setq org-directory "~/org/")
+     (setq config-directory "~/.emacs.d/")
+   #+END_SRC
+   I snitched some defaults from 'sensible-defaults.el' from this [[https://www.github.com/hrs/sensible-defaults.el][Link]].
 ** Open Files From Home Directory
    When opening a file, start searching at the user's home
    directory.
@@ -109,9 +114,10 @@
        (evil-leader/set-key "<RET>" 'bookmark-jump)
        ;; p - Project
        (evil-leader/set-key "pp" 'projectile-switch-project)
-       (evil-leader/set-key "pf" 'projectile-find-file)
+       (evil-leader/set-key "pf" 'counse-git)
        (evil-leader/set-key "pa" 'projectile-add-known-project)
        (evil-leader/set-key "pd" 'projectile-remove-known-project)
+       (evil-leader/set-key "ps" 'counse-git-grep)
        ;; b - Buffer
        (evil-leader/set-key "bs" 'save-buffer)
        (evil-leader/set-key "bp" 'previous-buffer)
@@ -126,6 +132,7 @@
        ;; n - Notes
        (evil-leader/set-key "nf" 'siatwe/find-org-file)
        (evil-leader/set-key "na" 'org-agenda)
+       (evil-leader/set-key "ns" 'siatwe/find-string-in-org-files)
        ;; g - maGit
        (evil-leader/set-key "gg" 'magit)
        ;; h - Help
@@ -135,23 +142,6 @@
        (evil-leader/set-key "hm" 'describe-mode)
        )
 
-     (defun siatwe/find-file-in-given-directory (directory)
-       (interactive)
-       (if directory-p
-	   (counsel-find-file directory)
-	 (message (format "Directory %s not found" directory))))
-
-     (defun siatwe/find-config-file ()
-       (interactive)
-       (counsel-find-file "~/.emacs.d/"))
-
-     (defun siatwe/find-org-file ()
-       (interactive)
-       (counsel-find-file "~/org/"))
-
-     (defun siatwe/find-string-in-org-files ()
-       (interactive)
-       (counsel-projectile-rg "~/org/"))
    #+END_SRC
 ** Evil Surround
    This package emulates surround.vim by Tim Pope. The functionality is wrapped
@@ -181,8 +171,6 @@
        (define-key evil-normal-state-map (kbd "M-D") 'evil-multiedit-match-and-prev)
        (define-key evil-visual-state-map (kbd "M-D") 'evil-multiedit-match-and-prev)
        (define-key evil-visual-state-map (kbd "C-M-D") 'evil-multiedit-restore)
-       (define-key evil-multiedit-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
-       (define-key evil-motion-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
        (define-key evil-multiedit-state-map (kbd "C-n") 'evil-multiedit-next)
        (define-key evil-multiedit-state-map (kbd "C-p") 'evil-multiedit-prev)
        (define-key evil-multiedit-insert-state-map (kbd "C-n") 'evil-multiedit-next)
@@ -282,6 +270,7 @@
               ("C-j" . ivy-next-line)
               ("C-k" . ivy-previous-line))
        :config
+       (setq ivy-use-selectable-prompt t)
        (ivy-mode 1))
 
      (use-package ivy-rich
@@ -604,21 +593,6 @@
      (use-package pdf-tools)
      (pdf-tools-install)
    #+END_SRC
-** Bongo
-   Bongo is a flexible and usable media player for GNU Emacs. If you store your
-   music collection locally and use structured file names, then Bongo is a great
-   way for you to play music from within Emacs.
-   #+BEGIN_SRC emacs-lisp
-     (use-package bongo
-       :config
-       (setq bongo-prefer-library-buffers nil)
-       (setq bongo-default-directory "~/Cloud/Music")
-       (setq bongo-insert-whole-directory-trees t)
-       (setq bongo-display-header-icons nil)
-       (setq bongo-mark-played-tracks t)
-       (setq bongo-header-line-mode nil)
-       (setq bongo-display-track-icons nil))
-   #+END_SRC
 * Functions
 ** Minify JS and LESS
    #+BEGIN_SRC emacs-lisp
@@ -676,15 +650,35 @@
          (other-window 1)
          (projectile-run-eshell "new")))
    #+END_SRC
+** Functions to sort
+   #+BEGIN_SRC emacs-lisp
+     (defun siatwe/find-file-in-given-directory (directory)
+       (interactive)
+       (if directory-p
+	   (counsel-find-file directory)
+	 (message (format "Directory %s not found" directory))))
+
+     (defun siatwe/find-config-file ()
+       (interactive)
+       (counsel-find-file config-directory))
+
+     (defun siatwe/find-org-file ()
+       (interactive)
+       (counsel-find-file nil org-directory))
+
+     (defun siatwe/find-string-in-org-files ()
+       (interactive)
+       (counsel-git-grep nil org-directory nil))
+   #+END_SRC
 * Misc
 ** Customization
 *** Space over tabs
     #+BEGIN_SRC emacs-lisp
-      (setq-default indent-tabs-mode nil)
+      ;;(setq-default indent-tabs-mode nil)
     #+END_SRC
 *** Avoid tabs.
     #+BEGIN_SRC emacs-lisp
-      (setq-default indent-tabs-mode nil)
+      ;;(setq-default indent-tabs-mode nil)
     #+END_SRC
 *** Disable mini-buffer start-up message
     #+BEGIN_SRC emacs-lisp
@@ -798,11 +792,15 @@
     #+END_SRC
 *** Disable Org Indent Mode.
     #+BEGIN_SRC emacs-lisp
-      ;;(org-indent-mode -1)
+      (org-indent-mode -1)
     #+END_SRC
 *** Ellipsis
     #+BEGIN_SRC emacs-lisp
         (setq org-ellipsis " ▾")
+    #+END_SRC
+*** Disable Indention on RET
+    #+BEGIN_SRC emacs-lisp
+      (add-hook 'org-mode-hook (lambda () (electric-indent-mode -1)))
     #+END_SRC
 * Pathfinder
   #+BEGIN_SRC emacs-lisp
@@ -818,5 +816,4 @@
                              "~/org/people.org"
                              "~/org/todo.org"
                              ))
-    (setq org-directory "~/org")
   #+END_SRC

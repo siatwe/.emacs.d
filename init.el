@@ -22,7 +22,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(org-evil visual-fill-column bongo pdf-tools tablist disk-usage rainbow-delimiters browse-kill-ring scratch windower expand-region eshell-did-you-mean eshell-up web-mode beacon which-key org-bullets hl-todo php-cs-fixer php-mode dracula-theme doom-modeline counsel-projectile projectile all-the-icons yasnippet lsp-treemacs treemacs-evil treemacs lsp-ui lsp-mode company helpful ivy-prescient flx counsel ivy-rich ivy emmet-mode magit diff-hl key-chord undo-tree evil-commentary evil-multiedit evil-matchit evil-leader evil-org evil-collection evil auto-compile use-package)))
+   '(fzf org-evil visual-fill-column bongo pdf-tools tablist disk-usage rainbow-delimiters browse-kill-ring scratch windower expand-region eshell-did-you-mean eshell-up web-mode beacon which-key org-bullets hl-todo php-cs-fixer php-mode dracula-theme doom-modeline counsel-projectile projectile all-the-icons yasnippet lsp-treemacs treemacs-evil treemacs lsp-ui lsp-mode company helpful ivy-prescient flx counsel ivy-rich ivy emmet-mode magit diff-hl key-chord undo-tree evil-commentary evil-multiedit evil-matchit evil-leader evil-org evil-collection evil auto-compile use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
