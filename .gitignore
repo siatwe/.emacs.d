@@ -1,0 +1,13 @@
+.cache/
+.local/
+.lsp-session-v1
+Emacs.el
+auto-save-list/
+eln-cache/
+elpa/
+eshell/
+lsp-cache/
+projectile-bookmarks.eld
+projects
+transient/
+var/

@@ -8,7 +8,7 @@
 * Defaults
 ** Variables
    #+begin_SRC emacs-lisp
-     (setq org-directory "~/org/")
+     (setq org-directory "~/.org/")
      (setq config-directory "~/.emacs.d/")
    #+END_SRC
    I snitched some defaults from 'sensible-defaults.el' from this [[https://www.github.com/hrs/sensible-defaults.el][Link]].
@@ -107,6 +107,7 @@
    nothing more than a convoluted key map, but for a Evil user coming from Vim
    it means an easier start.
    #+BEGIN_SRC emacs-lisp
+
      (use-package evil-leader
        :config
        (global-evil-leader-mode)
@@ -114,35 +115,47 @@
        (evil-leader/set-key "<RET>" 'bookmark-jump)
        ;; p - Project
        (evil-leader/set-key "pp" 'projectile-switch-project)
-       (evil-leader/set-key "pf" 'counse-git)
+       (evil-leader/set-key "pf" 'counsel-git)
        (evil-leader/set-key "pa" 'projectile-add-known-project)
        (evil-leader/set-key "pd" 'projectile-remove-known-project)
-       (evil-leader/set-key "ps" 'counse-git-grep)
+       (evil-leader/set-key "ps" 'counsel-git-grep)
        ;; b - Buffer
        (evil-leader/set-key "bs" 'save-buffer)
        (evil-leader/set-key "bp" 'previous-buffer)
        (evil-leader/set-key "bi" 'ibuffer)
        ;; f - Find
-       (evil-leader/set-key "fp" 'siatwe/find-config-file)
+       (evil-leader/set-key "fp" 
+         (lambda () 
+           (interactive) 
+           (siatwe/find-file-in-directory config-directory)))
+       (evil-leader/set-key "fs" 
+         (lambda () 
+           (interactive) 
+           (siatwe/find-string-in-directory config-directory)))
        ;; o - Open
        (evil-leader/set-key "oe" 'eshell-here)
        (evil-leader/set-key "od" 'dired)
        (evil-leader/set-key "op" 'treemacs)
        (evil-leader/set-key "ot" 'vterm)
        ;; n - Notes
-       (evil-leader/set-key "nf" 'siatwe/find-org-file)
+       (evil-leader/set-key "nf" 
+         (lambda () 
+           (interactive) 
+           (siatwe/find-file-in-directory org-directory)))
        (evil-leader/set-key "na" 'org-agenda)
-       (evil-leader/set-key "ns" 'siatwe/find-string-in-org-files)
+       (evil-leader/set-key "ns" 
+         (lambda () 
+           (interactive) 
+           (siatwe/find-string-in-directory org-directory)))
        ;; g - maGit
        (evil-leader/set-key "gg" 'magit)
        ;; h - Help
        (evil-leader/set-key "hv" 'describe-variable)
        (evil-leader/set-key "hf" 'describe-function)
        (evil-leader/set-key "hk" 'describe-key)
-       (evil-leader/set-key "hm" 'describe-mode)
-       )
+       (evil-leader/set-key "hm" 'describe-mode))
 
-   #+END_SRC
+     #+END_SRC
 ** Evil Surround
    This package emulates surround.vim by Tim Pope. The functionality is wrapped
    into a minor mode. This package uses Evil as its vi layer.
@@ -205,16 +218,23 @@
      (global-undo-tree-mode 1)
    #+END_SRC
 ** Key Chord
+   
    In this package, a "key chord" is two keys pressed simultaneously, or a
    single key quickly pressed twice.
+   
    #+BEGIN_SRC emacs-lisp
+
      (use-package key-chord
        :config
        (setq key-chord-two-keys-delay 0.5)
        (key-chord-define evil-insert-state-map "jj" 'evil-normal-state)
        (key-chord-define evil-insert-state-map "kk" 'yas-expand)
+       (key-chord-define evil-normal-state-map "ge" 'next-error)
+       (key-chord-define evil-normal-state-map "gE" 'previous-error)             
        (key-chord-mode 1))
+
    #+END_SRC
+   
 ** Diff Hl
    =diff-hl-mode= highlights uncommitted changes on the left side of the window,
    allows you to jump between and revert them selectively.
@@ -328,29 +348,6 @@
              company-idle-delay 0.0))
      (add-hook 'after-init-hook 'global-company-mode)
    #+end_SRC
-** LSP
-   Emacs client/library for the Language Server Protocol.
-   #+BEGIN_SRC emacs-lisp
-          (use-package lsp-mode
-            :hook (prog-mode . lsp)
-            :commands lsp
-            :config
-            (setq +lsp-company-backend 'company-capf)
-            (setq lsp-prefer-capf t)
-            (setq lsp-idle-delay 0.500)
-            (setq lsp-enable-file-watchers 1)
-            (setq lsp-file-watch-threshold '99999)
-            (setq lsp-ui-doc-enable nil)
-            (setq lsp-headerline-breadcrumb-enable nil)
-     )
-
-          (use-package lsp-ui
-            :after lsp-mode
-            :init
-            (setq lsp-ui-doc-enable nil)
-            :commands
-            lsp-ui-mode)
-   #+END_SRC
 ** Treemacs
    #+BEGIN_SRC emacs-lisp
      (use-package treemacs
@@ -362,6 +359,24 @@
      (use-package treemacs-projectile
        :after treemacs)
    #+END_SRC
+** LSP
+   
+   Emacs client/library for the Language Server Protocol.
+   
+   https://emacs-lsp.github.io/lsp-mode/tutorials/how-to-turn-off/
+   
+   #+BEGIN_SRC emacs-lisp
+
+     (use-package lsp-mode
+       :commands (lsp lsp-deferred)
+       :config
+       (setq lsp-enable-file-watchers 1)
+       (setq lsp-file-watch-threshold '99999)
+       (setq lsp-headerline-breadcrumb-enable nil)
+       (setq lsp-ui-doc-enable nil)
+       (lsp-enable-which-key-integration t))
+
+  #+END_SRC
 ** LSP Treemacs
    #+BEGIN_SRC emacs-lisp
      (use-package lsp-treemacs
@@ -428,9 +443,15 @@
      (add-to-list 'default-frame-alist `(alpha . ,siatwe/frame-transparency))
    #+END_SRC
 ** PHP Mode
+   
    A PHP mode for GNU Emacs.
+   
    #+BEGIN_SRC emacs-lisp
-     (use-package php-mode)
+
+     (use-package php-mode
+       :mode "\\.php\\'"
+       :hook (php-mode . lsp-deferred))
+
    #+END_SRC
 ** PHP CS Fixer
    =php-cs-fixer= wrapper for the Emacs editor.
@@ -441,6 +462,7 @@
    #+BEGIN_SRC emacs-lisp
      (use-package typescript-mode
        :mode "\\.ts\\'"
+       :hook (typescript-mode . lsp-deferred)
        :config
        (setq typescript-indent-level 2))
    #+END_SRC
@@ -652,33 +674,25 @@
    #+END_SRC
 ** Functions to sort
    #+BEGIN_SRC emacs-lisp
-     (defun siatwe/find-file-in-given-directory (directory)
-       (interactive)
-       (if directory-p
-	   (counsel-find-file directory)
-	 (message (format "Directory %s not found" directory))))
 
-     (defun siatwe/find-config-file ()
+     (defun siatwe/find-file-in-directory (directory)
        (interactive)
-       (counsel-find-file config-directory))
+       (if (file-directory-p directory)
+           (counsel-find-file nil directory)
+         (message (format "Directory %s not found!" directory))))
 
-     (defun siatwe/find-org-file ()
+     (defun siatwe/find-string-in-directory (directory)
        (interactive)
-       (counsel-find-file nil org-directory))
+       (if (file-directory-p directory)
+           (counsel-git-grep nil directory nil)
+         (message (format "Directory %s not found!" directory))))
 
-     (defun siatwe/find-string-in-org-files ()
-       (interactive)
-       (counsel-git-grep nil org-directory nil))
    #+END_SRC
 * Misc
 ** Customization
 *** Space over tabs
     #+BEGIN_SRC emacs-lisp
-      ;;(setq-default indent-tabs-mode nil)
-    #+END_SRC
-*** Avoid tabs.
-    #+BEGIN_SRC emacs-lisp
-      ;;(setq-default indent-tabs-mode nil)
+      (setq-default indent-tabs-mode nil)
     #+END_SRC
 *** Disable mini-buffer start-up message
     #+BEGIN_SRC emacs-lisp
@@ -696,7 +710,7 @@
     #+END_SRC
 *** Hide mouse while typing.
     #+BEGIN_SRC emacs-lisp
-      (mouse-avoidance-mode)
+      ;;(mouse-avoidance-mode)
     #+END_SRC
 *** Show matching parens.
     #+BEGIN_SRC emacs-lisp
@@ -804,16 +818,16 @@
     #+END_SRC
 * Pathfinder
   #+BEGIN_SRC emacs-lisp
-    (load "~/.emacs.d/lisp/pathfinder")
+    ;;(load "~/.emacs.d/lisp/pathfinder")
   #+END_SRC
 
 * To Sort
   #+BEGIN_SRC emacs-lisp
+
     (setq warning-minimum-level :emergency)
     (global-set-key (kbd "C-SPC") 'completion-at-point)
-    (setq org-agenda-files '(
-                             "~/org/appointments.org"
-                             "~/org/people.org"
-                             "~/org/todo.org"
-                             ))
+    (setq org-agenda-files '("~/.org/appointments.org"
+                             "~/.org/people.org"
+                             "~/.org/todo.org"))
+
   #+END_SRC
