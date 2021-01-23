@@ -116,12 +116,11 @@ mouse:
 *** bspwmrc
     #+begin_src sh :tangle ~/.config/bspwm/bspwmrc :mkdirp yes :tangle-mode (identity #o755)
       #! /bin/sh
-      # ein test
       # autostart applications
       # simple x hotkey daemon
       sxhkd &
       # wallpaper
-      nitrogen --set-scaled --save /data/Cloud/InstantUpload/OpenCamera/IMG_20200710_091314_HDR.jpg &
+      nitrogen --set-scaled --save /data/Cloud/InstantUpload/OpenCamera/IMG_20210108_071757_HDR.jpg &
       # statusbar
       $HOME/.config/polybar/launch.sh &
       # compositor
