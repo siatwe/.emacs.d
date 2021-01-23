@@ -2,16 +2,16 @@
 #+STARTUP: fold
 - M-x org-babel-tangle
 * Install AUR helper
-#+BEGIN_SRC sh
-pacman -S --needed git base-devel
-git clone https://aur.archlinux.org/yay.git
-cd yay
-makepkg -si
-#+END_SRC
+  #+BEGIN_SRC sh
+    pacman -S --needed git base-devel
+    git clone https://aur.archlinux.org/yay.git
+    cd yay
+    makepkg -si
+  #+END_SRC
 * Dotfiles
 ** alacritty
 *** alacritty.yml
-#+begin_src yaml :tangle ~/.config/alacritty/alacritty.yml :mkdirp yes
+    #+begin_src yaml :tangle ~/.config/alacritty/alacritty.yml :mkdirp yes
 font:
   normal:
     family: Hack
@@ -111,63 +111,63 @@ colors:
 
 mouse:
     hide_when_typing: true
-#+END_SRC
+    #+END_SRC
 ** bspwm
 *** bspwmrc
-#+begin_src sh :tangle ~/.config/bspwm/bspwmrc :mkdirp yes :tangle-mode (identity #o755)
-#! /bin/sh
-# ein test
-# autostart applications
-# simple x hotkey daemon
-sxhkd &
-# wallpaper
-nitrogen --set-scaled --save /data/Cloud/InstantUpload/OpenCamera/IMG_20200710_091314_HDR.jpg &
-# statusbar
-$HOME/.config/polybar/launch.sh &
-# compositor
-picom -CGb &
-# wlan
-sudo netctl start @home &
-# redshift bluelight filter
-redshift-gtk -l '47.7303:12.8816' &
-# bluetooth
-blueman-applet &
-# wm fix phpstorm
-wmname LG3D &
-# dunst
-dunst &
-# fusuma (gestures)
-fusuma &
-# nextcloud
-nextcloud &
-# emacs
-emacs &
+    #+begin_src sh :tangle ~/.config/bspwm/bspwmrc :mkdirp yes :tangle-mode (identity #o755)
+      #! /bin/sh
+      # ein test
+      # autostart applications
+      # simple x hotkey daemon
+      sxhkd &
+      # wallpaper
+      nitrogen --set-scaled --save /data/Cloud/InstantUpload/OpenCamera/IMG_20200710_091314_HDR.jpg &
+      # statusbar
+      $HOME/.config/polybar/launch.sh &
+      # compositor
+      picom -CGb &
+      # wlan
+      sudo netctl start @home &
+      # redshift bluelight filter
+      redshift-gtk -l '47.7303:12.8816' &
+      # bluetooth
+      blueman-applet &
+      # wm fix phpstorm
+      wmname LG3D &
+      # dunst
+      dunst &
+      # fusuma (gestures)
+      fusuma &
+      # nextcloud
+      nextcloud &
+      # emacs
+      emacs &
 
-# set workspaces
-bspc monitor -d 1 2 3 4 5 6 7 8 9 0
+      # set workspaces
+      bspc monitor -d 1 2 3 4 5 6 7 8 9 0
 
-# style
-bspc config border_width          3
-bspc config window_gap            0
-bspc config bottom_padding        0
+      # style
+      bspc config border_width          3
+      bspc config window_gap            0
+      bspc config bottom_padding        0
 
-bspc config borderless_monocle    true
-bspc config gapless_monocle       false
-bspc config single_monocle        true
+      bspc config borderless_monocle    true
+      bspc config gapless_monocle       false
+      bspc config single_monocle        true
 
-bspc config normal_border_color "#282a36"
-bspc config focused_border_color "#50fa7b"
-bspc config urgent_border_color "#282a36"
-bspc config presel_border_color "#282a36"
+      bspc config normal_border_color "#282a36"
+      bspc config focused_border_color "#50fa7b"
+      bspc config urgent_border_color "#282a36"
+      bspc config presel_border_color "#282a36"
 
-bspc config ignore_ewmh_focus true
+      bspc config ignore_ewmh_focus true
 
-bspc rule -a Firefox follow=false
-bspc rule -a Emacs state=tiled
-#+END_SRC
+      bspc rule -a Firefox follow=false
+      bspc rule -a Emacs state=tiled
+    #+END_SRC
 ** dunst
 *** dunstrc
-#+begin_src config :tangle ~/.config/dunst/dunstrc :mkdirp yes
+    #+begin_src config :tangle ~/.config/dunst/dunstrc :mkdirp yes
 [global]
     monitor = 0
     follow = mouse
@@ -238,27 +238,20 @@ bspc rule -a Emacs state=tiled
     foreground = "#ffffff"
     frame_color = "#ff0000"
     timeout = 0
-#+END_SRC
+    #+END_SRC
 ** fusuma
 *** config.yml
-#+begin_src yaml :tangle ~/.config/fusuma/config.yml :mkdirp yes
+    #+begin_src yaml :tangle ~/.config/fusuma/config.yml :mkdirp yes
 swipe:
   3:
     left:
       command: "bspc desktop -f next"
     right:
       command: "bspc desktop -f prev"
-#+END_SRC
+    #+END_SRC
 ** neovim
 *** init.vim (vscode)
-#+begin_src vim :tangle ~/.config/nvim/init.vim :mkdirp yes
-swipe:
-  3:
-    left:
-      command: "bspc desktop -f next"
-    right:
-      command: "bspc desktop -f prev"
-#+END_SRC
+    #+begin_src vim :tangle ~/.config/nvim/init.vim :mkdirp yes
 "                          _
 "   ____  ___  ____ _   __(_)___ ___
 "  / __ \/ _ \/ __ \ | / / / __ `__ \
@@ -320,9 +313,9 @@ omap gc  <Plug>VSCodeCommentary
 nmap gcc <Plug>VSCodeCommentaryLine
 
 "}}}
-#+END_SRC
+    #+END_SRC
 *** init.vim (backup)
-#+begin_src vim :tangle ~/.config/nvim/init.vim_bk :mkdirp yes
+    #+begin_src vim :tangle ~/.config/nvim/init.vim_bk :mkdirp yes
 "                          _
 "   ____  ___  ____ _   __(_)___ ___
 "  / __ \/ _ \/ __ \ | / / / __ `__ \
@@ -704,9 +697,9 @@ require'nvim-treesitter.configs'.setup {
 }
 EOF
 " }}}
-#+END_SRC
+    #+END_SRC
 *** coc-settings.json
-#+begin_src json :tangle ~/.config/nvim/coc-settings.json :mkdirp yes
+    #+begin_src json :tangle ~/.config/nvim/coc-settings.json :mkdirp yes
 {
     "coc.preferences.useQuickfixForLocations": true,
     "diagnostic.warningSign": "",
@@ -754,25 +747,25 @@ EOF
         }
     }
 }
-#+END_SRC
+    #+END_SRC
 *** snippets
 **** php.snippets
-#+begin_src snippets :tangle ~/.config/nvim/snippets/php.snippets :mkdirp yes
+     #+begin_src snippets :tangle ~/.config/nvim/snippets/php.snippets :mkdirp yes
 snippet t "this->"
 $this->$1
 endsnippet
-#+END_SRC
+     #+END_SRC
 ** picom
 *** picom.conf
-#+begin_src config :tangle ~/.config/picom/picom.conf :mkdirp yes
+    #+begin_src config :tangle ~/.config/picom/picom.conf :mkdirp yes
 shadow = false;
 no-dnd-shadow = true;
 no-dock-shadow = true;
 clear-shadow = false;
-#+END_SRC
+    #+END_SRC
 ** polybar
 *** config
-#+begin_src config :tangle ~/.config/polybar/config :mkdirp yes
+    #+begin_src config :tangle ~/.config/polybar/config :mkdirp yes
 [colors]
 background = #E0282a36
 background-alt = #073642
@@ -984,37 +977,37 @@ animation-discharging-2 = 
 animation-discharging-3 = 
 animation-discharging-4 = 
 animation-discharging-framerate = 500
-#+END_SRC
+    #+END_SRC
 *** launch.sh
-#+begin_src sh :tangle ~/.config/polybar/launch.sh :mkdirp yes :tangle-mode (identity #o755)
-#! /usr/bin/env sh
+    #+begin_src sh :tangle ~/.config/polybar/launch.sh :mkdirp yes :tangle-mode (identity #o755)
+      #! /usr/bin/env sh
 
-killall -q polybar
+      killall -q polybar
 
-while pgrep -u $UID -x polybar >/dev/null; do sleep 1; done
+      while pgrep -u $UID -x polybar >/dev/null; do sleep 1; done
 
-MONITOR=eDP-1-1 polybar --reload cerebrum &
-#+END_SRC
+      MONITOR=eDP-1-1 polybar --reload cerebrum &
+    #+END_SRC
 *** scripts
 **** arch-updates.sh
-#+begin_src sh :tangle ~/.config/polybar/scripts/arch-updates.sh :mkdirp yes :tangle-mode (identity #o755)
-#!/bin/sh
+     #+begin_src sh :tangle ~/.config/polybar/scripts/arch-updates.sh :mkdirp yes :tangle-mode (identity #o755)
+       #!/bin/sh
 
-if ! updates_arch=$(checkupdates 2> /dev/null | wc -l ); then
-    updates_arch=0
-fi
+       if ! updates_arch=$(checkupdates 2> /dev/null | wc -l ); then
+           updates_arch=0
+       fi
 
-if ! updates_aur=$(yay -Qum 2> /dev/null | wc -l); then
-    updates_aur=0
-fi
+       if ! updates_aur=$(yay -Qum 2> /dev/null | wc -l); then
+           updates_aur=0
+       fi
 
-updates=$(("$updates_arch" + "$updates_aur"))
+       updates=$(("$updates_arch" + "$updates_aur"))
 
-echo " $updates"
-#+END_SRC
+       echo " $updates"
+     #+END_SRC
 ** sxhkd
 *** sxhkdrc
-#+begin_src config :tangle ~/.config/sxhkd/sxhkdrc :mkdirp yes
+    #+begin_src config :tangle ~/.config/sxhkd/sxhkdrc :mkdirp yes
 ## Application hotkeys Run rofi application launcher
 super + d
    dmenu_run
@@ -1168,198 +1161,198 @@ super + alt + shift + {h,j,k,l}
 # Move a floating window
 super + {Left,Down,Up,Right}
     bspc node -v {-20 0,0 20,0 -20,20 0}
-#+END_SRC
+    #+END_SRC
 ** zsh
 *** zshrc
-#+begin_src sh :tangle ~/.zshrc :mkdirp yes
-export ZSH="/home/siatwe/.oh-my-zsh"
-export LC_ALL="en_US.UTF-8"
-export EDITOR='nvim'
-export UPDATE_ZSH_DAYS=30
+    #+begin_src sh :tangle ~/.zshrc :mkdirp yes
+      export ZSH="/home/siatwe/.oh-my-zsh"
+      export LC_ALL="en_US.UTF-8"
+      export EDITOR='nvim'
+      export UPDATE_ZSH_DAYS=30
 
-export ANDROID_HOME=/opt/android-sdk
-export PATH="$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
+      export ANDROID_HOME=/opt/android-sdk
+      export PATH="$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
 
-export PATH="$PATH:/home/siatwe/Projects/flutter/bin"
-# set
-ZSH_THEME="eastwood"
-TERM=xterm-256color
+      export PATH="$PATH:/home/siatwe/Projects/flutter/bin"
+      # set
+      ZSH_THEME="eastwood"
+      TERM=xterm-256color
 
-#  plugins
-plugins=(
-  git
-)
+      #  plugins
+      plugins=(
+          git
+      )
 
-# aliases
-alias ytd='youtube-dl --extract-audio --audio-format mp3 -i -o "%(title)s.%(ext)s" '
-alias :q="exit"
-alias 55="cd /data/55"
-alias 53="cd /data/53"
-alias pl="pacman -Qqe > ~/.package.list"
-alias ping="ping -c 3"
-alias ds="docker_start_restart"
+      # aliases
+      alias ytd='youtube-dl --extract-audio --audio-format mp3 -i -o "%(title)s.%(ext)s" '
+      alias :q="exit"
+      alias 55="cd /data/55"
+      alias 53="cd /data/53"
+      alias pl="pacman -Qqe > ~/.package.list"
+      alias ping="ping -c 3"
+      alias ds="docker_start_restart"
 
-# Oh my zsh
-source $ZSH/oh-my-zsh.sh
-# FZF
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-export FZF_DEFAULT_OPTS='--layout=reverse'
-#+END_SRC
+      # Oh my zsh
+      source $ZSH/oh-my-zsh.sh
+      # FZF
+      [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+      export FZF_DEFAULT_OPTS='--layout=reverse'
+    #+END_SRC
 * Scripts
-#+begin_src sh :tangle ~/.doom.d/scripts/toggle-touchpad.sh :mkdirp yes :tangle-mode (identity #o755)
-#!/bin/bash
-if xinput list-props 12 | grep "Device Enabled (186):	1" >/dev/null
-then
-  xinput disable 12
-  notify-send -u low -i mouse "Trackpad disabled"
-else
-  xinput enable 12
-  notify-send -u low -i mouse "Trackpad enabled"
-fi
-#+END_SRC
+  #+begin_src sh :tangle ~/.doom.d/scripts/toggle-touchpad.sh :mkdirp yes :tangle-mode (identity #o755)
+    #!/bin/bash
+    if xinput list-props 12 | grep "Device Enabled (186):	1" >/dev/null
+    then
+        xinput disable 12
+        notify-send -u low -i mouse "Trackpad disabled"
+    else
+        xinput enable 12
+        notify-send -u low -i mouse "Trackpad enabled"
+    fi
+  #+END_SRC
 * List all installed packages
-#+BEGIN_SRC sh
-pacman -Qqe
-#+END_SRC
+  #+BEGIN_SRC sh
+    pacman -Qqe
+  #+END_SRC
 
-#+RESULTS:
-| acpi                         |
-| alacritty                    |
-| alsa-utils                   |
-| autoconf                     |
-| automake                     |
-| awesome-terminal-fonts       |
-| base                         |
-| binutils                     |
-| bison                        |
-| blueman                      |
-| bluez                        |
-| bluez-utils                  |
-| blugon                       |
-| bspwm                        |
-| bunsen-themes-git            |
-| chromium                     |
-| cmake                        |
-| composer                     |
-| dhcpcd                       |
-| dialog                       |
-| discord                      |
-| dmenu                        |
-| docker                       |
-| docker-compose               |
-| dosfstools                   |
-| dunst                        |
-| efibootmgr                   |
-| fakeroot                     |
-| fd                           |
-| file                         |
-| file-roller                  |
-| filezilla                    |
-| findutils                    |
-| firefox                      |
-| flex                         |
-| gawk                         |
-| gcc                          |
-| gettext                      |
-| git                          |
-| gnome-keyring                |
-| gnome-screenshot             |
-| google-chrome-dev            |
-| gpm                          |
-| gptfdisk                     |
-| graphviz                     |
-| grep                         |
-| groff                        |
-| gzip                         |
-| lazygit                      |
-| libgccjit                    |
-| libreoffice-fresh            |
-| libtool                      |
-| light                        |
-| lightdm                      |
-| lightdm-gtk-greeter          |
-| lightdm-gtk-greeter-settings |
-| linux                        |
-| linux-firmware               |
-| linux-headers                |
-| m4                           |
-| make                         |
-| man-db                       |
-| masterpdfeditor              |
-| mpv                          |
-| msmtp                        |
-| nano                         |
-| ncdu                         |
-| neofetch                     |
-| neovim-git                   |
-| nerd-fonts-hack              |
-| netctl                       |
-| nextcloud-client             |
-| nitrogen                     |
-| nodejs-intelephense          |
-| nodejs-less                  |
-| nodejs-less-plugin-clean-css |
-| npm                          |
-| nvidia                       |
-| pacman                       |
-| pacman-contrib               |
-| patch                        |
-| php-gd                       |
-| phpstorm                     |
-| phpstorm-jre                 |
-| picom                        |
-| pkgconf                      |
-| polybar                      |
-| pulseaudio-bluetooth         |
-| python                       |
-| python-adblock               |
-| python-pynvim                |
-| qutebrowser-git              |
-| redshift                     |
-| redshiftgui-bin              |
-| reflector                    |
-| ripgrep                      |
-| ruby-fusuma                  |
-| sed                          |
-| sendemail                    |
-| skypeforlinux-stable-bin     |
-| spotify                      |
-| sudo                         |
-| sxhkd                        |
-| teams                        |
-| teamviewer                   |
-| texinfo                      |
-| texlive-bibtexextra          |
-| texlive-core                 |
-| texlive-fontsextra           |
-| texlive-formatsextra         |
-| texlive-games                |
-| texlive-humanities           |
-| texlive-latexextra           |
-| texlive-music                |
-| texlive-pictures             |
-| texlive-pstricks             |
-| texlive-publishers           |
-| texlive-science              |
-| the_silver_searcher          |
-| thunar                       |
-| thunar-archive-plugin        |
-| tree-sitter                  |
-| ttf-hack                     |
-| ttf-ms-fonts                 |
-| tutanota-desktop-bin         |
-| unzip                        |
-| vim                          |
-| visual-studio-code-bin       |
-| which                        |
-| wmname                       |
-| wpa_supplicant               |
-| xclip                        |
-| xorg-xinput                  |
-| yarn                         |
-| yay                          |
-| youtube-dl                   |
-| yuicompressor                |
-| zip                          |
-| zoom                         |
-| zsh                          |
+  #+RESULTS:
+  | acpi                         |
+  | alacritty                    |
+  | alsa-utils                   |
+  | autoconf                     |
+  | automake                     |
+  | awesome-terminal-fonts       |
+  | base                         |
+  | binutils                     |
+  | bison                        |
+  | blueman                      |
+  | bluez                        |
+  | bluez-utils                  |
+  | blugon                       |
+  | bspwm                        |
+  | bunsen-themes-git            |
+  | chromium                     |
+  | cmake                        |
+  | composer                     |
+  | dhcpcd                       |
+  | dialog                       |
+  | discord                      |
+  | dmenu                        |
+  | docker                       |
+  | docker-compose               |
+  | dosfstools                   |
+  | dunst                        |
+  | efibootmgr                   |
+  | fakeroot                     |
+  | fd                           |
+  | file                         |
+  | file-roller                  |
+  | filezilla                    |
+  | findutils                    |
+  | firefox                      |
+  | flex                         |
+  | gawk                         |
+  | gcc                          |
+  | gettext                      |
+  | git                          |
+  | gnome-keyring                |
+  | gnome-screenshot             |
+  | google-chrome-dev            |
+  | gpm                          |
+  | gptfdisk                     |
+  | graphviz                     |
+  | grep                         |
+  | groff                        |
+  | gzip                         |
+  | lazygit                      |
+  | libgccjit                    |
+  | libreoffice-fresh            |
+  | libtool                      |
+  | light                        |
+  | lightdm                      |
+  | lightdm-gtk-greeter          |
+  | lightdm-gtk-greeter-settings |
+  | linux                        |
+  | linux-firmware               |
+  | linux-headers                |
+  | m4                           |
+  | make                         |
+  | man-db                       |
+  | masterpdfeditor              |
+  | mpv                          |
+  | msmtp                        |
+  | nano                         |
+  | ncdu                         |
+  | neofetch                     |
+  | neovim-git                   |
+  | nerd-fonts-hack              |
+  | netctl                       |
+  | nextcloud-client             |
+  | nitrogen                     |
+  | nodejs-intelephense          |
+  | nodejs-less                  |
+  | nodejs-less-plugin-clean-css |
+  | npm                          |
+  | nvidia                       |
+  | pacman                       |
+  | pacman-contrib               |
+  | patch                        |
+  | php-gd                       |
+  | phpstorm                     |
+  | phpstorm-jre                 |
+  | picom                        |
+  | pkgconf                      |
+  | polybar                      |
+  | pulseaudio-bluetooth         |
+  | python                       |
+  | python-adblock               |
+  | python-pynvim                |
+  | qutebrowser-git              |
+  | redshift                     |
+  | redshiftgui-bin              |
+  | reflector                    |
+  | ripgrep                      |
+  | ruby-fusuma                  |
+  | sed                          |
+  | sendemail                    |
+  | skypeforlinux-stable-bin     |
+  | spotify                      |
+  | sudo                         |
+  | sxhkd                        |
+  | teams                        |
+  | teamviewer                   |
+  | texinfo                      |
+  | texlive-bibtexextra          |
+  | texlive-core                 |
+  | texlive-fontsextra           |
+  | texlive-formatsextra         |
+  | texlive-games                |
+  | texlive-humanities           |
+  | texlive-latexextra           |
+  | texlive-music                |
+  | texlive-pictures             |
+  | texlive-pstricks             |
+  | texlive-publishers           |
+  | texlive-science              |
+  | the_silver_searcher          |
+  | thunar                       |
+  | thunar-archive-plugin        |
+  | tree-sitter                  |
+  | ttf-hack                     |
+  | ttf-ms-fonts                 |
+  | tutanota-desktop-bin         |
+  | unzip                        |
+  | vim                          |
+  | visual-studio-code-bin       |
+  | which                        |
+  | wmname                       |
+  | wpa_supplicant               |
+  | xclip                        |
+  | xorg-xinput                  |
+  | yarn                         |
+  | yay                          |
+  | youtube-dl                   |
+  | yuicompressor                |
+  | zip                          |
+  | zoom                         |
+  | zsh                          |
