@@ -81,9 +81,9 @@
              evil-want-keybinding nil)
        :config
        (evil-mode 1)
-       (evil-define-key 'normal ‘global “gd” ’dumb-jump-go)
-       (evil-define-key 'normal ‘global “o” ’evil-insert-newline-below))
+       (evil-define-key 'normal ‘global “gd” ’dumb-jump-go))
 
+     (add-hook 'git-commit-mode-hook 'evil-insert-state)
    #+END_SRC
 ** Evil Collection
    This is a collection of Evil bindings for the parts of Emacs that
