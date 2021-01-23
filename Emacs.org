@@ -153,12 +153,16 @@
            (interactive) 
            (siatwe/find-file-in-directory org-directory)))
        (evil-leader/set-key "na" 'org-agenda)
+       (evil-leader/set-key "ne" 'org-decrypt-entry)
        (evil-leader/set-key "ns" 
          (lambda () 
            (interactive) 
            (siatwe/find-string-in-directory org-directory)))
        ;; g - maGit
        (evil-leader/set-key "gg" 'magit)
+       ;; w - Window
+       (evil-leader/set-key "ws" 'evil-window-split)
+       (evil-leader/set-key "wv" 'evil-window-vsplit)
        ;; h - Help
        (evil-leader/set-key "hv" 'describe-variable)
        (evil-leader/set-key "hf" 'describe-function)
@@ -348,15 +352,18 @@
    "complete anything". It uses pluggable back-ends and front-ends to retrieve
    and display completion candidates.
    #+BEGIN_SRC emacs-lisp
+
      (use-package company
        :bind (:map company-active-map
-                   ("RET" . company-complete-selection)
+                   ("RET" . siatwe/company-complete-selection)
                    ("C-n" . company-select-next)
                    ("C-p" . company-select-previous))
        :config
        (setq company-minimum-prefix-length 1
              company-idle-delay 0.0))
-     (add-hook 'after-init-hook 'global-company-mode)
+
+       (add-hook 'after-init-hook 'global-company-mode)
+
    #+end_SRC
 ** Treemacs
    #+BEGIN_SRC emacs-lisp
@@ -625,6 +632,14 @@
      (use-package pdf-tools)
      (pdf-tools-install)
    #+END_SRC
+** Dired-k
+   #+BEGIN_SRC emacs-lisp
+     (use-package dired-k
+       :config
+       (setq dired-k-style 'git)
+       (add-hook 'dired-initial-position-hook 'dired-k)
+       (add-hook 'dired-after-readin-hook #'dired-k-no-revert))
+   #+END_SRC
 * Functions
 ** Minify JS and LESS
    #+BEGIN_SRC emacs-lisp
@@ -689,23 +704,31 @@
        "Find file in DIRECTORY."
        (interactive)
        (if (file-directory-p directory)
-           (counsel-find-file nil directory)
-         (message (format "Directory %s not found!" directory))))
+	   (counsel-find-file nil directory)
+	 (message (format "Directory %s not found!" directory))))
 
      (defun siatwe/find-string-in-directory (directory)
        "Find string in DIRECTORY."
        (interactive)
        (if (file-directory-p directory)
-           (counsel-git-grep nil directory nil)
-         (message (format "Directory %s not found!" directory))))
+	   (counsel-git-grep nil directory nil)
+	 (message (format "Directory %s not found!" directory))))
 
      (defun siatwe/org-edit-or-exit-special ()
        "Edit source block in language-mode when in org-mode. Otherwise exit
      language-mode and return to org-mode."
        (interactive)
        (if(string= "emacs-lisp-mode" major-mode)
-           (org-edit-src-exit)
-         (org-edit-special)))
+	   (org-edit-src-exit)
+	 (org-edit-special)))
+
+
+     (defun siatwe/company-complete-selection ()
+       "Insert the selected candidate or the first if none are selected."
+       (interactive)
+       (if company-selection
+	   (company-complete-selection)
+	 (company-complete-number 1)))
 
    #+END_SRC
 * Misc
@@ -830,7 +853,7 @@
     #+END_SRC
 *** Ellipsis
     #+BEGIN_SRC emacs-lisp
-        (setq org-ellipsis " ▾")
+      (setq org-ellipsis " ▾")
     #+END_SRC
 *** Disable Indention on RET
     #+BEGIN_SRC emacs-lisp
