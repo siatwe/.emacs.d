@@ -68,16 +68,22 @@
        (setq load-prefer-newer t))
    #+END_SRC
 ** Evil
+   
    Evil is an extensible vi layer for Emacs. It provides Vim features like
    Visual selection and text objects, and is the successor to the now-obsolete
    Vimpulse and vim-mode.
+   
    #+BEGIN_SRC emacs-lisp
+
      (use-package evil
        :init
        (setq evil-want-abbrev-expand-on-insert-exit nil
              evil-want-keybinding nil)
        :config
-       (evil-mode 1))
+       (evil-mode 1)
+       (evil-define-key 'normal ‘global “gd” ’dumb-jump-go)
+       (evil-define-key 'normal ‘global “o” ’evil-insert-newline-below))
+
    #+END_SRC
 ** Evil Collection
    This is a collection of Evil bindings for the parts of Emacs that
@@ -119,6 +125,7 @@
        (evil-leader/set-key "pd" 'projectile-remove-known-project)
        (evil-leader/set-key "ps" 'counsel-git-grep)
        ;; b - Buffer
+       (evil-leader/set-key "bb" 'counsel-switch-buffer)
        (evil-leader/set-key "bs" 'save-buffer)
        (evil-leader/set-key "bp" 'previous-buffer)
        (evil-leader/set-key "bi" 'ibuffer)
@@ -136,6 +143,7 @@
        (evil-leader/set-key "od" 'dired)
        (evil-leader/set-key "op" 'treemacs)
        (evil-leader/set-key "ot" 'vterm)
+       (evil-leader/set-key "os" 'siatwe/org-edit-or-exit-special)
        ;; n - Notes
        (evil-leader/set-key "nf" 
          (lambda () 
@@ -675,16 +683,26 @@
    #+BEGIN_SRC emacs-lisp
 
      (defun siatwe/find-file-in-directory (directory)
+       "Find file in DIRECTORY."
        (interactive)
        (if (file-directory-p directory)
            (counsel-find-file nil directory)
          (message (format "Directory %s not found!" directory))))
 
      (defun siatwe/find-string-in-directory (directory)
+       "Find string in DIRECTORY."
        (interactive)
        (if (file-directory-p directory)
            (counsel-git-grep nil directory nil)
          (message (format "Directory %s not found!" directory))))
+
+     (defun siatwe/org-edit-or-exit-special ()
+       "Edit source block in language-mode when in org-mode. Otherwise exit
+     language-mode and return to org-mode."
+       (interactive)
+       (if(string= "emacs-lisp-mode" major-mode)
+           (org-edit-src-exit)
+         (org-edit-special)))
 
    #+END_SRC
 * Misc
@@ -816,6 +834,7 @@
       (add-hook 'org-mode-hook (lambda () (electric-indent-mode -1)))
     #+END_SRC
 * Pathfinder
+  
   #+BEGIN_SRC emacs-lisp
     ;;(load "~/.emacs.d/lisp/pathfinder")
   #+END_SRC
@@ -824,9 +843,11 @@
   #+BEGIN_SRC emacs-lisp
 
     (setq warning-minimum-level :emergency)
-    (global-set-key (kbd "C-SPC") 'completion-at-point)
+    (global-set-key (kbd "C-SPC") 'company-capf)
     (setq org-agenda-files '("~/.org/appointments.org"
                              "~/.org/people.org"
                              "~/.org/todo.org"))
+    (use-package org-tree-slide)
+    (setq initial-scratch-message "")
 
   #+END_SRC
