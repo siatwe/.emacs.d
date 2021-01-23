@@ -1,0 +1,5 @@
+* .emacs.d
+** Emacs.org
+   Emacs configuration.
+** Desktop.org
+   Dotfiles and configuration for the desktop environment based on org-tangle.
