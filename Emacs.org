@@ -81,9 +81,11 @@
              evil-want-keybinding nil)
        :config
        (evil-mode 1)
+       (evil-define-key 'normal 'global (kbd "<RET>") 'org-ctrl-c-ctrl-c)
        (evil-define-key 'normal ‘global “gd” ’dumb-jump-go))
 
      (add-hook 'git-commit-mode-hook 'evil-insert-state)
+
    #+END_SRC
 ** Evil Collection
    This is a collection of Evil bindings for the parts of Emacs that
@@ -127,6 +129,7 @@
        ;; b - Buffer
        (evil-leader/set-key "bb" 'counsel-switch-buffer)
        (evil-leader/set-key "bs" 'save-buffer)
+       (evil-leader/set-key "bS" 'projectile-save-project-buffers)
        (evil-leader/set-key "bp" 'previous-buffer)
        (evil-leader/set-key "bi" 'ibuffer)
        ;; f - Find
