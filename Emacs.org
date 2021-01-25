@@ -248,16 +248,13 @@
        (key-chord-mode 1))
 
    #+END_SRC
-   
-** Diff Hl
-   =diff-hl-mode= highlights uncommitted changes on the left side of the window,
-   allows you to jump between and revert them selectively.
+** Git Gutter
    #+BEGIN_SRC emacs-lisp
-     (use-package diff-hl
+     (use-package git-gutter
        :config
-       (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
-       (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
-       (global-diff-hl-mode))
+       (global-git-gutter-mode +1)
+       (custom-set-variables
+        '(git-gutter:update-interval 2)))
    #+END_SRC
 ** Tramp
    TRAMP (Transparent Remote Access, Multiple Protocols) is a package for
