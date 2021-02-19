@@ -125,6 +125,7 @@
        (evil-leader/set-key "pf" 'counsel-git)
        (evil-leader/set-key "pa" 'projectile-add-known-project)
        (evil-leader/set-key "pd" 'projectile-remove-known-project)
+       (evil-leader/set-key "pD" 'projectile-discover-projects-in-search-path)
        (evil-leader/set-key "ps" 'counsel-git-grep)
        ;; b - Buffer
        (evil-leader/set-key "bb" 'counsel-switch-buffer)
@@ -387,8 +388,10 @@
        (setq lsp-enable-file-watchers 1)
        (setq lsp-file-watch-threshold '99999)
        (setq lsp-headerline-breadcrumb-enable nil)
-       (setq lsp-ui-doc-enable nil)
+       ;; (setq lsp-ui-doc-enable nil)
        (lsp-enable-which-key-integration t))
+
+     (use-package lsp-ui)
 
   #+END_SRC
 ** LSP Treemacs
@@ -637,6 +640,16 @@
        (add-hook 'dired-initial-position-hook 'dired-k)
        (add-hook 'dired-after-readin-hook #'dired-k-no-revert))
    #+END_SRC
+** Tree Sitter
+   #+BEGIN_SRC emacs-lisp
+     (use-package tree-sitter-langs)
+     (use-package tree-sitter
+       :config
+       (require 'tree-sitter)
+       (require 'tree-sitter-langs)
+       (global-tree-sitter-mode)
+       (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+   #+END_SRC
 * Functions
 ** Minify JS and LESS
    #+BEGIN_SRC emacs-lisp
@@ -740,7 +753,7 @@
     #+END_SRC
 *** Eww as default browser
     #+BEGIN_SRC emacs-lisp
-      (setq browse-url-browser-function 'eww-browse-url)
+      (setq browse-url-browser-function 'browse-url-default-browser)
     #+END_SRC
 *** Disable GUI elements.
     #+BEGIN_SRC emacs-lisp
@@ -867,8 +880,7 @@
 
     (setq warning-minimum-level :emergency)
     (global-set-key (kbd "C-SPC") 'company-capf)
-    (setq org-agenda-files '("~/.org/appointments.org"
-                             "~/.org/people.org"
+    (setq org-agenda-files '("~/.org/people.org"
                              "~/.org/todo.org"))
     (use-package org-tree-slide)
     (setq initial-scratch-message "")
