@@ -170,7 +170,7 @@
        (evil-leader/set-key "hk" 'describe-key)
        (evil-leader/set-key "hm" 'describe-mode))
 
-     #+END_SRC
+   #+END_SRC
 ** Evil Surround
    This package emulates surround.vim by Tim Pope. The functionality is wrapped
    into a minor mode. This package uses Evil as its vi layer.
@@ -360,7 +360,7 @@
        (setq company-minimum-prefix-length 1
              company-idle-delay 0.0))
 
-       (add-hook 'after-init-hook 'global-company-mode)
+     (add-hook 'after-init-hook 'global-company-mode)
 
    #+end_SRC
 ** Treemacs
@@ -393,7 +393,7 @@
 
      (use-package lsp-ui)
 
-  #+END_SRC
+   #+END_SRC
 ** LSP Treemacs
    #+BEGIN_SRC emacs-lisp
      (use-package lsp-treemacs
@@ -650,6 +650,10 @@
        (global-tree-sitter-mode)
        (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
    #+END_SRC
+** Vterm
+   #+BEGIN_SRC emacs-lisp
+     (use-package vterm)
+   #+END_SRC
 * Functions
 ** Minify JS and LESS
    #+BEGIN_SRC emacs-lisp
@@ -714,31 +718,31 @@
        "Find file in DIRECTORY."
        (interactive)
        (if (file-directory-p directory)
-	   (counsel-find-file nil directory)
-	 (message (format "Directory %s not found!" directory))))
+           (counsel-find-file nil directory)
+         (message (format "Directory %s not found!" directory))))
 
      (defun siatwe/find-string-in-directory (directory)
        "Find string in DIRECTORY."
        (interactive)
        (if (file-directory-p directory)
-	   (counsel-git-grep nil directory nil)
-	 (message (format "Directory %s not found!" directory))))
+           (counsel-git-grep nil directory nil)
+         (message (format "Directory %s not found!" directory))))
 
      (defun siatwe/org-edit-or-exit-special ()
        "Edit source block in language-mode when in org-mode. Otherwise exit
      language-mode and return to org-mode."
        (interactive)
        (if(string= "emacs-lisp-mode" major-mode)
-	   (org-edit-src-exit)
-	 (org-edit-special)))
+           (org-edit-src-exit)
+         (org-edit-special)))
 
 
      (defun siatwe/company-complete-selection ()
        "Insert the selected candidate or the first if none are selected."
        (interactive)
        (if company-selection
-	   (company-complete-selection)
-	 (company-complete-number 1)))
+           (company-complete-selection)
+         (company-complete-number 1)))
 
    #+END_SRC
 * Misc
