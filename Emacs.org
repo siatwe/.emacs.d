@@ -1,4 +1,5 @@
 #+STARTUP: fold
+
 * use-package
   Check if use-package is installed and always ensure t.
   #+BEGIN_SRC emacs-lisp
@@ -133,6 +134,7 @@
        (evil-leader/set-key "bS" 'projectile-save-project-buffers)
        (evil-leader/set-key "bp" 'previous-buffer)
        (evil-leader/set-key "bi" 'ibuffer)
+       (evil-leader/set-key "bk" 'kill-buffer)
        ;; f - Find
        (evil-leader/set-key "fp" 
          (lambda () 
