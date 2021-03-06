@@ -1,3 +1,4 @@
+#+TITLE: Emacs
 #+STARTUP: fold
 
 * use-package
@@ -52,8 +53,7 @@
    #+BEGIN_SRC emacs-lisp
      (global-font-lock-mode t)
    #+END_SRC
-** Set Default Line Length To 80
-   Set the default line length to 80.
+** Set Default Line Length To 100
    #+BEGIN_SRC emacs-lisp
      (setq-default fill-column 100)
    #+END_SRC
@@ -69,24 +69,21 @@
        (setq load-prefer-newer t))
    #+END_SRC
 ** Evil
-   
    Evil is an extensible vi layer for Emacs. It provides Vim features like
    Visual selection and text objects, and is the successor to the now-obsolete
    Vimpulse and vim-mode.
-   
    #+BEGIN_SRC emacs-lisp
-
      (use-package evil
        :init
        (setq evil-want-abbrev-expand-on-insert-exit nil
              evil-want-keybinding nil)
+       :hook
+       (add-hook 'git-commit-mode-hook 'evil-insert-state)
        :config
        (evil-mode 1)
        (evil-define-key 'normal 'global (kbd "<RET>") 'org-ctrl-c-ctrl-c)
-       (evil-define-key 'normal ‘global “gd” ’dumb-jump-go))
-
-     (add-hook 'git-commit-mode-hook 'evil-insert-state)
-
+       (evil-define-key 'normal ‘global “gd” ’dumb-jump-go)
+       (setq-default evil-kill-on-visual-paste nil))
    #+END_SRC
 ** Evil Collection
    This is a collection of Evil bindings for the parts of Emacs that
@@ -235,12 +232,9 @@
      (global-undo-tree-mode 1)
    #+END_SRC
 ** Key Chord
-   
    In this package, a "key chord" is two keys pressed simultaneously, or a
    single key quickly pressed twice.
-   
    #+BEGIN_SRC emacs-lisp
-
      (use-package key-chord
        :config
        (setq key-chord-two-keys-delay 0.5)
@@ -249,7 +243,6 @@
        (key-chord-define evil-normal-state-map "ge" 'next-error)
        (key-chord-define evil-normal-state-map "gE" 'previous-error)             
        (key-chord-mode 1))
-
    #+END_SRC
 ** Git Gutter
    #+BEGIN_SRC emacs-lisp
@@ -450,11 +443,15 @@
 ** Theme
    Dracula can't stand the light.
    #+BEGIN_SRC emacs-lisp
-     (use-package dracula-theme
+     (use-package doom-themes
        :config
-       (load-theme 'dracula t)
        (setq doom-themes-enable-bold t
-             doom-themes-enable-italic t))
+             doom-themes-enable-italic t)
+       (load-theme 'doom-dracula t)
+       (doom-themes-visual-bell-config)
+       (setq doom-themes-treemacs-theme "doom-colors")
+       (doom-themes-treemacs-config)
+       (doom-themes-org-config))
 
      (defvar siatwe/frame-transparency '(100 . 100))
 
@@ -865,7 +862,7 @@
     #+END_SRC
 *** Disable Org Indent Mode.
     #+BEGIN_SRC emacs-lisp
-      (org-indent-mode -1)
+      (org-indent-mode)
     #+END_SRC
 *** Ellipsis
     #+BEGIN_SRC emacs-lisp
@@ -873,7 +870,7 @@
     #+END_SRC
 *** Disable Indention on RET
     #+BEGIN_SRC emacs-lisp
-      (add-hook 'org-mode-hook (lambda () (electric-indent-mode -1)))
+      ;;(add-hook 'org-mode-hook (lambda () (electric-indent-mode -1)))
     #+END_SRC
 * Pathfinder
   
@@ -887,8 +884,45 @@
     (setq warning-minimum-level :emergency)
     (global-set-key (kbd "C-SPC") 'company-capf)
     (setq org-agenda-files '("~/.org/people.org"
+                             "~/.org/appointments.org"
                              "~/.org/todo.org"))
-    (use-package org-tree-slide)
+    (use-package org-tree-slide
+      :config
+      (with-eval-after-load "org-tree-slide"
+        (define-key org-tree-slide-mode-map (kbd "<f9>") 'org-tree-slide-move-previous-tree)
+        (define-key org-tree-slide-mode-map (kbd "<f10>") 'org-tree-slide-move-next-tree)))
+
     (setq initial-scratch-message "")
 
+    (use-package shrink-path)
+
+      (setq eshell-prompt-regexp "^.* λ "
+            eshell-prompt-function #'+eshell/prompt)
+
+      (defun +eshell/prompt ()
+        (let ((base/dir (shrink-path-prompt default-directory)))
+          (concat (propertize (car base/dir)
+                              'face 'font-lock-comment-face)
+                  (propertize (cdr base/dir)
+                              'face 'font-lock-constant-face)
+                  (propertize (+eshell--current-git-branch)
+                              'face 'font-lock-function-name-face)
+                  (propertize " λ" 'face 'eshell-prompt-face)
+                  ;; needed for the input text to not have prompt face
+                  (propertize " " 'face 'default))))j
+
+      ;; for completeness sake
+      (defun +eshell--current-git-branch ()
+        (let ((branch (car (loop for match in (split-string (shell-command-to-string "git branch") "\n")
+                                 when (string-match "^\*" match)
+                                 collect match))))
+          (if (not (eq branch nil))
+              (concat " [" (substring branch 2) "]")
+            "")))
+
+    (use-package eshell-syntax-highlighting
+      :after esh-mode
+      :config
+      (eshell-syntax-highlighting-global-mode +1))
   #+END_SRC
+  

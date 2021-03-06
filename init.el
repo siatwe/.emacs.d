@@ -24,7 +24,7 @@
  '(git-gutter:update-interval 2)
  '(org-agenda-files '("~/.org/people.org" "~/.org/todo.org"))
  '(package-selected-packages
-   '(vterm tree-sitter-langs git-gutter all-the-icons-ivy dired-k dired-git-info org-tree-slide yasnippet windower which-key web-mode visual-fill-column use-package undo-tree typescript-mode treemacs-projectile treemacs-evil scratch rainbow-delimiters php-mode php-cs-fixer pdf-tools org-evil org-bullets magit lsp-ui lsp-treemacs key-chord ivy-rich ivy-prescient hl-todo helpful general fzf flx expand-region evil-org evil-multiedit evil-matchit evil-leader evil-commentary evil-collection eshell-up eshell-did-you-mean emmet-mode dracula-theme doom-modeline disk-usage diff-hl counsel-projectile company browse-kill-ring bongo beacon auto-compile)))
+   '(doom-themes eshell-syntax-highlighting vterm tree-sitter-langs git-gutter all-the-icons-ivy dired-k dired-git-info org-tree-slide yasnippet windower which-key web-mode visual-fill-column use-package undo-tree typescript-mode treemacs-projectile treemacs-evil scratch rainbow-delimiters php-mode php-cs-fixer pdf-tools org-evil org-bullets magit lsp-ui lsp-treemacs key-chord ivy-rich ivy-prescient hl-todo helpful general fzf flx expand-region evil-org evil-multiedit evil-matchit evil-leader evil-commentary evil-collection eshell-up eshell-did-you-mean emmet-mode dracula-theme doom-modeline disk-usage diff-hl counsel-projectile company browse-kill-ring bongo beacon auto-compile)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
