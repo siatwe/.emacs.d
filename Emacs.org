@@ -142,10 +142,24 @@
            (interactive) 
            (siatwe/find-string-in-directory config-directory)))
        ;; o - Open
-       (evil-leader/set-key "oe" 'eshell-here)
+       (evil-leader/set-key "oe" 
+         (lambda () 
+           (interactive) 
+           (siatwe/open-command-in-split-window "projectile-run-eshell")))
+       (evil-leader/set-key "oE" 
+         (lambda () 
+           (interactive) 
+           (siatwe/open-command-in-split-window "eshell")))
        (evil-leader/set-key "od" 'dired)
        (evil-leader/set-key "op" 'treemacs)
-       (evil-leader/set-key "ot" 'vterm)
+       (evil-leader/set-key "ot" 
+         (lambda () 
+           (interactive) 
+           (siatwe/open-command-in-split-window "projectile-run-vterm")))
+       (evil-leader/set-key "oT" 
+         (lambda () 
+           (interactive) 
+           (siatwe/open-command-in-split-window "vterm")))
        (evil-leader/set-key "os" 'siatwe/org-edit-or-exit-special)
        ;; n - Notes
        (evil-leader/set-key "nf" 
@@ -693,22 +707,15 @@
         (format "%s::%d" (buffer-file-name) (save-restriction
                                               (widen) (line-number-at-pos)))))
    #+END_SRC
-** Small eshell On Bottom Of Window
+** Open commands in split window (for eshell/vterm) 
    Thanks to [[https://github.com/abrochard/emacs-config/blob/master/configuration.org][abrochard]].
    #+BEGIN_SRC emacs-lisp
-     (defun eshell-here ()
+     (defun siatwe/open-command-in-split-window (term-command)
        (interactive)
        (let* ((height (/ (window-total-height) 3)))
          (split-window-vertically (- height))
          (other-window 1)
-         (eshell "new")))
-
-     (defun projectile-eshell-here ()
-       (interactive)
-       (let* ((height (/ (window-total-height) 3)))
-         (split-window-vertically (- height))
-         (other-window 1)
-         (projectile-run-eshell "new")))
+         (funcall (intern term-command))))
    #+END_SRC
 ** Functions to sort
    #+BEGIN_SRC emacs-lisp
@@ -880,6 +887,14 @@
 
 * To Sort
   #+BEGIN_SRC emacs-lisp
+    ;; for completeness sake
+    (defun +eshell--current-git-branch ()
+      (let ((branch (car (loop for match in (split-string (shell-command-to-string "git branch") "\n")
+                               when (string-match "^\*" match)
+                               collect match))))
+        (if (not (eq branch nil))
+            (concat " [" (substring branch 2) "]")
+          "")))
 
     (setq warning-minimum-level :emergency)
     (global-set-key (kbd "C-SPC") 'company-capf)
@@ -896,33 +911,29 @@
 
     (use-package shrink-path)
 
-      (setq eshell-prompt-regexp "^.* λ "
-            eshell-prompt-function #'+eshell/prompt)
+    (setq eshell-prompt-regexp "^.* λ "
+          eshell-prompt-function #'+eshell/prompt)
 
-      (defun +eshell/prompt ()
-        (let ((base/dir (shrink-path-prompt default-directory)))
-          (concat (propertize (car base/dir)
-                              'face 'font-lock-comment-face)
-                  (propertize (cdr base/dir)
-                              'face 'font-lock-constant-face)
-                  (propertize (+eshell--current-git-branch)
-                              'face 'font-lock-function-name-face)
-                  (propertize " λ" 'face 'eshell-prompt-face)
-                  ;; needed for the input text to not have prompt face
-                  (propertize " " 'face 'default))))j
+    (defun +eshell/prompt ()
+      (let ((base/dir (shrink-path-prompt default-directory)))
+        (concat (propertize (car base/dir)
+                            'face 'font-lock-comment-face)
+                (propertize (cdr base/dir)
+                            'face 'font-lock-constant-face)
+                (propertize (+eshell--current-git-branch)
+                            'face 'font-lock-function-name-face)
+                (propertize " λ" 'face 'eshell-prompt-face)
+                ;; needed for the input text to not have prompt face
+                (propertize " " 'face 'default))))j
 
-      ;; for completeness sake
-      (defun +eshell--current-git-branch ()
-        (let ((branch (car (loop for match in (split-string (shell-command-to-string "git branch") "\n")
-                                 when (string-match "^\*" match)
-                                 collect match))))
-          (if (not (eq branch nil))
-              (concat " [" (substring branch 2) "]")
-            "")))
 
     (use-package eshell-syntax-highlighting
       :after esh-mode
       :config
       (eshell-syntax-highlighting-global-mode +1))
+
+    (use-package visual-fill-column)
+
+    (use-package writeroom-mode)
   #+END_SRC
   
