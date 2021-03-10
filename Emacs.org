@@ -467,7 +467,7 @@
        (doom-themes-treemacs-config)
        (doom-themes-org-config))
 
-     (defvar siatwe/frame-transparency '(100 . 100))
+     (defvar siatwe/frame-transparency '(95 . 95))
 
      (set-frame-parameter (selected-frame) 'alpha siatwe/frame-transparency)
      (add-to-list 'default-frame-alist `(alpha . ,siatwe/frame-transparency))
@@ -666,6 +666,21 @@
 ** Vterm
    #+BEGIN_SRC emacs-lisp
      (use-package vterm)
+   #+END_SRC
+** Git Auto Commit Mode
+  #+BEGIN_SRC emacs-lisp
+    (use-package git-auto-commit-mode
+      :config
+      (setq-default gac-automatically-add-new-files-p t)
+      (setq-default gac-automatically-push-p t))
+  #+END_SRC 
+** Visual Fill Column
+   #+BEGIN_SRC emacs-lisp
+    (use-package visual-fill-column)
+   #+END_SRC
+** Writeroom Mode
+   #+BEGIN_SRC emacs-lisp
+    (use-package writeroom-mode)
    #+END_SRC
 * Functions
 ** Minify JS and LESS
@@ -901,6 +916,7 @@
     (setq org-agenda-files '("~/.org/people.org"
                              "~/.org/appointments.org"
                              "~/.org/todo.org"))
+
     (use-package org-tree-slide
       :config
       (with-eval-after-load "org-tree-slide"
@@ -932,8 +948,7 @@
       :config
       (eshell-syntax-highlighting-global-mode +1))
 
-    (use-package visual-fill-column)
 
-    (use-package writeroom-mode)
+
   #+END_SRC
   
