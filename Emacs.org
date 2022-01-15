@@ -5,7 +5,7 @@
   Check if use-package is installed and always ensure t.
   #+BEGIN_SRC emacs-lisp
     (require 'use-package-ensure)
-    (setq use-package-always-ensure t)
+    (setq use-package-always-ensure nil)
   #+END_SRC
 * Defaults
 ** Variables
@@ -53,38 +53,28 @@
    #+BEGIN_SRC emacs-lisp
      (global-font-lock-mode t)
    #+END_SRC
-** Set Default Line Length To 100
+** Set Default Line Length To 80
    #+BEGIN_SRC emacs-lisp
-     (setq-default fill-column 100)
+     (setq-default fill-column 80)
    #+END_SRC
 * Packages
-** Auto Compile
-   This package provides two minor modes which automatically recompile Emacs
-   Lisp source files. Together these modes guarantee that Emacs never loads
-   outdated byte code files.
-   #+BEGIN_SRC emacs-lisp
-     (use-package auto-compile
-       :config
-       (auto-compile-on-load-mode)
-       (setq load-prefer-newer t))
-   #+END_SRC
 ** Evil
    Evil is an extensible vi layer for Emacs. It provides Vim features like
    Visual selection and text objects, and is the successor to the now-obsolete
    Vimpulse and vim-mode.
    #+BEGIN_SRC emacs-lisp
-          (use-package evil
-            :init
-            (setq evil-want-abbrev-expand-on-insert-exit nil
-                  evil-want-keybinding nil)
-            :hook
-            (add-hook 'git-commit-mode-hook 'evil-insert-state)
-            :config
-            (evil-mode 1)
-            (evil-define-key 'normal 'global (kbd "<RET>") 'org-ctrl-c-ctrl-c)
-            (evil-define-key 'normal ‘global “gd” ’dumb-jump-go)
-            (setq-default evil-kill-on-visual-paste nil)
-            (evil-set-undo-system 'undo-tree))
+     (use-package evil
+       :init
+       (setq evil-want-abbrev-expand-on-insert-exit nil
+             evil-want-keybinding nil)
+       :hook
+       (add-hook 'git-commit-mode-hook 'evil-insert-state)
+       :config
+       (evil-mode 1)
+       (evil-define-key 'normal 'global (kbd "<RET>") 'org-ctrl-c-ctrl-c)
+       (evil-define-key 'normal ‘global “gd” ’dumb-jump-go)
+       (setq-default evil-kill-on-visual-paste nil)
+       (evil-set-undo-system 'undo-tree))
    #+END_SRC
 ** Evil Collection
    This is a collection of Evil bindings for the parts of Emacs that
@@ -185,14 +175,6 @@
        (evil-leader/set-key "hm" 'describe-mode))
 
    #+END_SRC
-** Evil Surround
-   This package emulates surround.vim by Tim Pope. The functionality is wrapped
-   into a minor mode. This package uses Evil as its vi layer.
-   #+BEGIN_SRC emacs-lisp
-     ;; (use-package evil-surround
-     ;;   :config
-     ;;   (global-evil-surround-mode))
-   #+END_SRC
 ** Evil Matchit
    #+BEGIN_SRC emacs-lisp
      (use-package evil-matchit
@@ -226,11 +208,6 @@
      (use-package evil-commentary
        :config
        (evil-commentary-mode))
-   #+END_SRC
-** Evil Magit
-   Black magic or evil keys for magit.
-   #+BEGIN_SRC emacs-lisp
-     ;;(use-package evil-magit)
    #+END_SRC
 ** Evil Org
    #+BEGIN_SRC emacs-lisp
@@ -334,14 +311,6 @@
              '((ivy-switch-buffer . ivy--regex-plus)
                (t . ivy--regex-fuzzy))))
 
-     (use-package ivy-prescient
-       :after counsel
-       :custom
-       (ivy-prescient-enable-filtering nil)
-       :config
-       ;; Uncomment the following line to have sorting remembered across sessions!
-       (prescient-persist-mode 1)
-       (ivy-prescient-mode 1))
    #+END_SRC
 ** Helpful
    #+BEGIN_SRC emacs-lisp
@@ -380,8 +349,10 @@
        (treemacs-git-mode 'simple)
        (treemacs-filewatch-mode t))
      (use-package treemacs-evil
+       :ensure t
        :after treemacs)
      (use-package treemacs-projectile
+       :ensure t
        :after treemacs)
    #+END_SRC
 ** LSP
@@ -473,30 +444,6 @@
      (set-frame-parameter (selected-frame) 'alpha siatwe/frame-transparency)
      (add-to-list 'default-frame-alist `(alpha . ,siatwe/frame-transparency))
    #+END_SRC
-** PHP Mode
-   
-   A PHP mode for GNU Emacs.
-   
-   #+BEGIN_SRC emacs-lisp
-
-     (use-package php-mode
-       :mode "\\.php\\'"
-       :hook (php-mode . lsp-deferred))
-
-   #+END_SRC
-** PHP CS Fixer
-   =php-cs-fixer= wrapper for the Emacs editor.
-   #+BEGIN_SRC emacs-lisp
-     (use-package php-cs-fixer)
-   #+END_SRC
-** Typescript
-   #+BEGIN_SRC emacs-lisp
-     (use-package typescript-mode
-       :mode "\\.ts\\'"
-       :hook (typescript-mode . lsp-deferred)
-       :config
-       (setq typescript-indent-level 2))
-   #+END_SRC
 ** Hl Todo
    Highlight TODO and similar keywords in comments and strings
    #+BEGIN_SRC emacs-lisp
@@ -519,29 +466,6 @@
      (use-package which-key
        :config
        (which-key-mode))
-   #+END_SRC
-** Beacon
-   A light that follows your cursor around so you don't lose it!
-   #+BEGIN_SRC emacs-lisp
-     (use-package beacon
-       :config
-       (beacon-mode 1))
-   #+END_SRC
-** Yaml Mode
-   yaml-mode.el helps you edit YAML .yml files.
-   #+BEGIN_SRC emacs-lisp
-     ;; (use-package yaml-mode
-     ;;   :config
-     ;;   (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
-   #+END_SRC
-** Web Mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package web-mode
-       :config
-       (setq web-mode-markup-indent-offset 2
-             web-mode-css-indent-offset 2 web-mode-code-indent-offset
-             2 web-mode-indent-style 2)
-       (add-to-list 'auto-mode-alist '("\\.twig\\'" . web-mode)))
    #+END_SRC
 ** Eshell
    #+BEGIN_SRC emacs-lisp
@@ -583,17 +507,6 @@
        (setq eshell-last-command-name "catt")
        (eshell-did-you-mean-output-filter "catt: command not found"))
    #+END_SRC
-** Expand Region
-   Expand region increases the selected region by semantic units. Just keep
-   pressing the key until it selects what you want.
-   #+BEGIN_SRC emacs-lisp
-     (use-package expand-region)
-   #+END_SRC
-** Windower
-   Helper functions for window manipulation.
-   #+BEGIN_SRC emacs-lisp
-     (use-package windower)
-   #+END_SRC
 ** Scratch
    Scratch is an extension to Emacs that enables one to create scratch buffers
    that are in the same mode as the current buffer. This is notably useful when
@@ -601,16 +514,8 @@
    and, by virtue of this extension, do so using the Emacs formatting rules for
    that language.
    #+BEGIN_SRC emacs-lisp
-     (use-package scratch)
-   #+END_SRC
-** Browse Kill Ring
-   Are you tired of using the endless keystrokes of C-y M-y M-y M-y ... to get
-   at that bit of text you killed thirty-seven kills ago? Ever wish you could
-   just look through everything you've killed recently to find out if you killed
-   that piece of text that you think you killed, but you're not quite sure? If
-   so, then browse-kill-ring is the Emacs extension for you.
-   #+BEGIN_SRC emacs-lisp
-     (use-package browse-kill-ring)
+     (use-package scratch
+       :ensure t)
    #+END_SRC
 ** Rainbow Delimiters
    rainbow-delimiters is a "rainbow parentheses"-like mode which highlights
@@ -622,66 +527,36 @@
      (use-package rainbow-delimiters)
      (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
    #+END_SRC
-** Disk Usage
-   #+BEGIN_SRC emacs-lisp
-     (use-package disk-usage)
-   #+END_SRC
-** Tablist
-   Needed for PDF Tools.
-   #+BEGIN_SRC emacs-lisp
-     (use-package tablist)
-   #+END_SRC
-** PDF Tools
-   PDF Tools is, among other things, a replacement of DocView for PDF files. The
-   key difference is that pages are not pre-rendered by e.g. ghostscript and
-   stored in the file-system, but rather created on-demand and stored in memory.
-   This rendering is performed by a special library named, for whatever reason,
-   poppler, running inside a server program. This program is called epdfinfo and
-   its job is to successively read requests from Emacs and produce the proper
-   results, i.e. the PNG image of a PDF page. Actually, displaying PDF files is
-   just one part of PDF Tools. Since poppler can provide us with all kinds of
-   information about a document and is also able to modify it, there is a lot
-   more we can do with it.
-   #+BEGIN_SRC emacs-lisp
-     (use-package pdf-tools)
-     (pdf-tools-install)
-   #+END_SRC
-** Dired-k
-   #+BEGIN_SRC emacs-lisp
-     (use-package dired-k
-       :config
-       (setq dired-k-style 'git)
-       (add-hook 'dired-initial-position-hook 'dired-k)
-       (add-hook 'dired-after-readin-hook #'dired-k-no-revert))
-   #+END_SRC
 ** Tree Sitter
    #+BEGIN_SRC emacs-lisp
-     (use-package tree-sitter-langs)
+     (use-package tree-sitter-langs
+       :ensure t)
      (use-package tree-sitter
+       :ensure t
        :config
        (require 'tree-sitter)
        (require 'tree-sitter-langs)
        (global-tree-sitter-mode)
        (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
    #+END_SRC
-** Vterm
-   #+BEGIN_SRC emacs-lisp
-     (use-package vterm)
-   #+END_SRC
 ** Git Auto Commit Mode
-  #+BEGIN_SRC emacs-lisp
-    (use-package git-auto-commit-mode
-      :config
-      (setq-default gac-automatically-add-new-files-p t)
-      (setq-default gac-automatically-push-p t))
-  #+END_SRC 
+   #+BEGIN_SRC emacs-lisp
+     (use-package git-auto-commit-mode
+       :config
+       (setq-default gac-automatically-add-new-files-p t)
+       (setq-default gac-automatically-push-p t))
+   #+END_SRC 
 ** Visual Fill Column
    #+BEGIN_SRC emacs-lisp
-    (use-package visual-fill-column)
+     (use-package visual-fill-column)
    #+END_SRC
 ** Writeroom Mode
    #+BEGIN_SRC emacs-lisp
-    (use-package writeroom-mode)
+     (use-package writeroom-mode)
+   #+END_SRC
+** Vterm
+   #+BEGIN_SRC emacs-lisp
+     (use-package vterm)
    #+END_SRC
 * Functions
 ** Minify JS and LESS
@@ -895,12 +770,6 @@
     #+BEGIN_SRC emacs-lisp
       ;;(add-hook 'org-mode-hook (lambda () (electric-indent-mode -1)))
     #+END_SRC
-* Pathfinder
-  
-  #+BEGIN_SRC emacs-lisp
-    ;;(load "~/.emacs.d/lisp/pathfinder")
-  #+END_SRC
-
 * To Sort
   #+BEGIN_SRC emacs-lisp
     ;; for completeness sake
@@ -915,14 +784,7 @@
     (setq warning-minimum-level :emergency)
     (global-set-key (kbd "C-SPC") 'company-capf)
     (setq org-agenda-files '("~/.org/people.org"
-                             "~/.org/appointments.org"
-                             "~/.org/todo.org"))
-
-    (use-package org-tree-slide
-      :config
-      (with-eval-after-load "org-tree-slide"
-        (define-key org-tree-slide-mode-map (kbd "<f9>") 'org-tree-slide-move-previous-tree)
-        (define-key org-tree-slide-mode-map (kbd "<f10>") 'org-tree-slide-move-next-tree)))
+                             "~/.org/timer.org"))
 
     (setq initial-scratch-message "")
 
@@ -949,7 +811,6 @@
       :config
       (eshell-syntax-highlighting-global-mode +1))
 
-
-
   #+END_SRC
+  
   
